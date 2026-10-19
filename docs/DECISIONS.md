@@ -50,8 +50,10 @@
 - **الأثر:** أصول Cesium (342 ملفاً) تُنسخ وتُخدَم من `/cesiumStatic` في dev والبناء — تحقق: lint نظيف · build ناجح · الأصول تُخدَم في dev (HTTP 200).
 - **ملاحظة أمنية (dev فقط):** `npm audit` يبلّغ عن 3 تحذيرات عالية عبر `chokidar@3 → braces` داخل الـplugin — لا تُشحن للإنتاج ولا تُغذّى من مدخلات خارجية؛ تُتابع عند تحديث الـupstream.
 
-## ADR-012 — إدارة الحالة: Zustand 🕓 (يُعتمد في P1)
-- **السبب المرجح:** خفيف، بلا Boilerplate، ومناسب لفصل حالة التطبيق عن كيانات Cesium.
+## ADR-012 — إدارة الحالة: Zustand ✅ (اعتماد نهائي 2026-10-20 — T2.1)
+- **السبب:** خفيف، بلا Boilerplate، ومناسب لفصل حالة التطبيق عن كيانات Cesium.
+- **الحسم (T2.1):** `zustand@5.0.15`؛ أول مخزن `src/store/usePointsStore.ts` (points + selectedPointId)؛ يُختبر في Node بلا DOM عبر `getState()`؛ كيانات Cesium تُشتق منه عبر effect مركزي — بلا قراءة مباشرة من المخزن داخل Cesium (ARCHITECTURE §5).
+- **البدائل المرفوضة:** Context API (إعادة رسم أوسع وبلا selectors دقيقة) · Redux Toolkit (ثقل boilerplate بلا حاجة فعلية الآن).
 
 ## ADR-013 — قاعدة IndexedDB: Dexie 🕓 (يُعتمد في P6)
 - **السبب المرجح:** API أنظف وإدارة إصدارات سكيمة أفضل من IndexedDB الخام أو LocalStorage.
@@ -94,6 +96,16 @@
 - **القرار:** (1) الحالة أصبحت `LayerState { baseLayer: BaseLayerId; labels; terrain }` حيث `BaseLayerId = imagery | streets | topographic` — خريطة أساس **واحدة** بنمط radio + التسميات والتضاريس خياران مستقلان. (2) مصدر حقيقة واحد للثوابت في `features/map/layerSources.ts` (الأنواع + عناوين ArcGIS الثلاثة + التسميات + `WORLD_TERRAIN_ASSET_ID = 1`) — ليكون قابلاً للاختبار في Node بمعزل عن Cesium (استيراد الـhook مباشرةً يستورد `widgets.css` ويتطلب توكن ion في مستوى الوحدة). (3) التبديل **متزامن**: `imageryLayers.remove(previous, true)` ثم `add(nextLayer, 0)` (في الأسفل) كي تبقى التسميات فوق أي أساس — بلا debounce (لا سباق في Cesium أصلاً؛ الحماية الفعلية: `errorEvent` مستقل لكل طبقة + حارس التضاريس غير المتزامنة والكاش القائمين). (4) عناصر القائمة `<input type="radio/checkbox">` أصلية (دلالات ARIA ولوحة مفاتيح مجاناً) بدل أزرار مخصصة؛ زر الأيقونة يحتفظ بـ`aria-expanded`، والإغلاق خارجياً/Escape كما في ADR-021.
 - **البدائل المرفوضة:** debounce 150ms (تأخير محسوس بلا حماية إضافية — التبديل متزامن) · إعادة تفعيل `BaseLayerPicker` المدمج (ADR-020/021) · اختبار الـhook مباشرةً في Node (مستحيل بلا DOM/Cesium Viewer) — عُوّض باختبار ثوابت المصادر.
 - **الأثر:** ملف جديد `layerSources.ts` + اختبار `tests/layers.test.ts` (يحرس: 3 مصادر Esri فقط، صفر Bing/virtualearth، تسميات Esri، أصل التضاريس 1) · `LayerSelector`/`useCesiumViewer`/`MapView`/`App`/`index.css`/`ar.json`/`en.json` · مفاتيح `layers.*` الثمانية · إسناد Esri يبقى مستحقاً في الواجهة (ADR-020).
+
+## ADR-023 — نموذج النقطة: GeoPoint ✅ (2026-10-20 — T2.1، بمواصفة المالك)
+- **القرار:** `src/core/geo/GeoPoint.ts` كيان نقي مشترك بلا React/Cesium: `id` · `lat`/`lon` (درجات عشرية على WGS84) · `height?` (متر فوق المجسم الإهليلجي) · `label?` (اختياري — الترقيم المعروض بالترتيب لا بحقل) · `source: 'gps' | 'manual' | 'utm' | 'mgrs' | 'click' | 'geocoding'` · `createdAt: Date`؛ توليد `id`/`createdAt` مسؤولية المستدعي في هذه المرحلة.
+- **البدائل المرفوضة:** `longitude`/`latitude` المطوّلة (اختار المالك `lat`/`lon`) · حقل `order` مخزّن (الترتيب = موضع المصفوفة في المخزن) · اسم إلزامي (الـ`label` اختياري).
+- **الأثر:** يفرضه كل مسارات إدخال P2؛ أي تعديل على الحقول = ADR جديد؛ ملاحظة مفتوحة: هامش دقة GPS (FR-1) غير ممثَّل بعد (OQ-3).
+
+## ADR-024 — موضع العرض الأولي للنقاط على الكرة ✅ (2026-10-20 — حسم المالك)
+- **السياق:** تعارض صياغة: DoD المرحلة P2 يفرض «النقطة تظهر مرقمة على الكرة»، بينما T4.1 (P4) يصف «Pin مرقّم + Tooltip».
+- **القرار:** العرض الأولي (علامة + رقم بسيطان مشتقان من المخزن) يدخل في T2.2 مع أول مصدر إدخال — والتصميم النهائي (Pin أيقوني + Tooltip + تمييز التحديد) يبقى في T4.1.
+- **الأثر:** T2.2 يشمل `features/map/usePointEntities.ts` وإعادة `useCesiumViewer` العارض لربط المزامنة؛ لا تغيير في P4 سوى التوسعة البصرية.
 
 ---
 
