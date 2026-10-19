@@ -4,11 +4,11 @@
 
 | البند | القيمة |
 |---|---|
-| آخر تحديث | 2026-10-20 — الجلسة 10 |
-| المرحلة الحالية | **P2 جارية — T2.2 مكتمل ☑ («موقعي الحالي» + أول عرض للنقاط على الكرة) — التالية: T2.3** |
-| حالة المرحلة | ⏳ جارية — T2.1–T2.2 منفّذتان ومتحققتان |
-| المهمة الجارية الآن | **لا مهمة جارية — T2.2 ملتزمة (الجلسة 10)؛ التالية: T2.3 بانتظار اعتماد البدء** |
-| المهمة التالية | **T2.3 — إدخال يدوي DD/DMS + معاينة فورية** |
+| آخر تحديث | 2026-10-20 — الجلسة 15 |
+| المرحلة الحالية | **P2 مغلقة ✅ (T2.1–T2.7) — التالية: تفصيل P3 واعتماده قبل T3.1** |
+| حالة المرحلة | ✅ مغلقة بقرار المالك (2026-10-20) — الفحوص اليدوية A-2..A-7 تبقى بنود قبول بصري معلّقة |
+| المهمة الجارية الآن | **لا مهمة جارية — P2 مغلقة؛ لا بدء لـP3 قبل اعتماد تفصيلها** |
+| المهمة التالية | **تفصيل مرحلة P3 (T3.1–T3.5) وعرضها على المالك — لا تنفيذ قبل الاعتماد** |
 | إعاقات تقنية | لا يوجد |
 
 ## بنود معلّقة على المالك (Action Items)
@@ -17,6 +17,10 @@
 | A-1 | ✅ تم — الحساب أُنشئ والتوكن مستلم ومحفوظ في `.env` محلياً (خارج Git) — فحص ion API: HTTP 200 | مُغلق (2026-10-19) |
 | A-2 | الفحص البصري لتوسعة T1.7 (تبديل 3 خرائط أساس · تسميات/تضاريس · AR/EN بلا أخطاء Console) | قبل إغلاق مراجعة P1 بصريًا |
 | A-3 | الفحص اليدوي لزر «موقعي الحالي» وعلامة النقطة على الكرة في متصفح حقيقي (GPS + رفض الإذن) | مراجعة T2.2 |
+| A-4 | الفحص اليدوي للإدخال اليدوي (DD/DMS · UTM · MGRS): صحة معاينة الصيغ الأربع · رسائل الأخطاء · إضافة النقطة للكرة · AR/EN | مراجعة T2.3/T2.4 |
+| A-5 | الفحص اليدوي لوضع النقر: دخول/خروج (Esc وبعد الإضافة) · نقطة على التضاريس بارتفاع · مؤشر crosshair · AR/EN | مراجعة T2.5 |
+| A-6 | الفحص اليدوي للبحث: نتائج حية بعد 600ms · اختيار نتيجة يضيف نقطة على الكرة · إسناد OSM · مشاهد 429/انقطاع الشبكة · AR/EN | مراجعة T2.6 |
+| A-7 | الفحص اليدوي لقائمة النقاط: ترقيم 1..n · تعديل التسمية (حفظ/إلغاء/Enter/Esc) · حذف مع تصفير الاختيار · الترتيب أعلى/أسفل وتزامن أرقام الكرة · التركيز flyTo · AR/EN | مراجعة T2.7 |
 
 ## مراجع سريعة
 - المتطلبات المعتمدة: `REQUIREMENTS.md` (v1.0)
@@ -32,6 +36,53 @@
 | OQ-3 | إضافة هامش دقة GPS إلى نموذج GeoPoint (مطلوب لـFR-1) | مغلق — أُضيف `accuracy` في T2.2 (ADR-025) |
 
 ## سجل الجلسات (الأحدث أولًا)
+### الجلسة 15 — 2026-10-20 — T2.7: قائمة النقاط + إغلاق P2 تقنيًا
+- جديد: `features/points/PointsPanel.tsx` (ترقيم 1..n · تسمية داخلية حفظ/إلغاء/Enter/Esc · حذف مع تصفير الاختيار · ترتيب أعلى/أسفل · تركيز) · `features/map/useFlyTo.ts` (`FlyToRequest` + `camera.flyTo` بارتفاع `max(height+2000, 2000)` للتركيز) · `lib/collections.ts` (`moveItem` نقية) · `tests/collections.test.ts` (4) · `tests/flyTo.test.ts` (3).
+- تعديلات: `App` (حالة `flyToRequest` + `focusPoint`) · `Sidebar` (تركيب PointsPanel وتمرير `onFocusPoint`) · `MapView` (استهلاك `useFlyTo`) · `index.css` (أنماط القائمة) · مفاتيح `points.panel.*` (ar/en) · `ARCHITECTURE §5/§6` (توثيق فصل Cesium وواجهة geocoding).
+- تصحيحات على مواصفة المالك (ADR-030): الملف في `features/points/PointsPanel.tsx` وفق ROADMAP بدل `components/PointList.tsx` · إزالة `viewer: any` و`viewer` كليًا من المكوّن · التركيز عبر طلب حالة يستهلكه MapView بدل `camera.flyTo` داخل القائمة (وإزالة ازدواج `onFlyTo` + flyTo) · إضافة الترقيم وإعادة الترتيب المطلوبين · إصلاح `editLabel = ''` (تعيين لمتغير حالة ثابت) إلى `cancelEditing` · نصوص i18n بدل العربية المضمنة · زر حذف يصفّر الاختيار ويغلق التحرير.
+- تحقق: lint نظيف · format:check نظيف · test **71/71** (13 ملفًا؛ +7) · build ناجح (1888 وحدة) · dev-server: PointsPanel/useFlyTo/collections/App/Sidebar/MapView بـHTTP 200.
+- **الفحص اليدوي المطلوب (A-7):** ترقيم وتزامن الكرة · تسمية/حفظ/إلغاء · حذف/اختيار · ترتيب أعلى/أسفل · تركيز flyTo · AR/EN.
+- **P2 مكتملة تقنيًا** — لا بدء لـP3 قبل تفصيلها واعتماد المالك.
+- **إغلاق P2:** بقرار المالك (2026-10-20) — الفحوص اليدوية A-2..A-7 تبقى بنود قبول بصري معلّقة (ADR-031).
+- الالتزام: `feat(points): complete P2 point input and management (T2.3-T2.7)`.
+
+### الجلسة 14 — 2026-10-20 — T2.6: البحث بالاسم عبر Nominatim
+- جديد: `services/geocoding.ts` (واجهة `GeocodingProvider` — ADR-014 · تحقق zod من الاستجابة · كاش 50 · تصنيف 429/شبكة/استجابة غير صالحة · إسناد OSM) · `features/points/useGeocoding.ts` (debounce 600ms · `AbortController` · تنظيف المؤقت عند الإغلاق · حالات loading/error) · `features/points/GeocodingSearch.tsx` (حقل بحث · قائمة نتائج قابلة للنقر · حالات فراغ/خطأ/تحميل · رابط إسناد) · `tests/geocoding.test.ts` (7 اختبارات بلا شبكة).
+- تعديلات: `PointsTools` (إضافة البحث) · `index.css` (أنماط البحث) · مفاتيح `points.search.*` (ar/en).
+- تصحيحات على مواصفة المالك (ADR-029): إزالة `any` · `import type GeoPoint` · إزالة ترويسة `User-Agent` (محظورة في المتصفح وتسبب CORS preflight) · إلغاء الطلبات القديمة وتنظيف المؤقت · فحص `response.ok` و429 · تحقق zod من الحقول الخارجية · نقل الشبكة إلى خدمة قابلة للاستبدال · حذف `label` الاحتياطي العربي المولّد داخل المنطق (ADR-004).
+- تحقق: lint نظيف · format:check نظيف · test **64/64** (11 ملفًا؛ +7) · build ناجح (1885 وحدة) · dev-server: geocoding/useGeocoding/GeocodingSearch/PointsTools بـHTTP 200.
+- **الفحص اليدوي المطلوب (A-6):** بحث حي · اختيار نتيجة · ظهور النقطة على الكرة · إسناد OSM · محاكاة انقطاع الشبكة/429 · AR/EN.
+- الالتزام (بانتظار موافقة المالك): `feat(search): add Nominatim place search (T2.6)`.
+
+### الجلسة 13 — 2026-10-20 — T2.5: إضافة نقطة بالنقر على الخريطة
+- جديد: `features/map/useMapClick.ts` (LEFT_CLICK → التقاط → نقطة `source: 'click'` · خروج بـEscape/بعد الإضافة · تسجيل وتنظيف `ScreenSpaceEventHandler`) · `features/map/mapPicking.ts` (`pickGlobeCoordinates` عبر `globe.pick` مع بديل `pickEllipsoid` + `cartesianToCoordinates` نقية).
+- تعديلات: `App` (حالة `isClickMode` + callbacks مستقرة) · `Sidebar` و`PointsTools` (زر وضع بـ`aria-pressed` + تلميح) · `MapView` (تشغيل الهوك + فئة المؤشر) · `index.css` (`crosshair`) · مفاتيح `points.clickMode*` (ar/en).
+- تصحيحات على مواصفة المالك (ADR-028): أنواع بدل `any` · `import type GeoPoint` · إزالة `Cartesian3` غير المستخدم · `Math as CesiumMath` · حماية `ray` وبديل `pickEllipsoid` · إضافة تسجيل الحدث والوضع/الخروج المطلوبة في ROADMAP · حذف `label` العربي المولّد داخل المنطق (ADR-004؛ الترقيم في T2.7).
+- اختبارات: `tests/mapPicking.test.ts` — 3 اختبارات (الرياض بارتفاع · نصف جنوبي/الأصل · خط الطول 180).
+- تحقق: lint نظيف · format:check نظيف · test **57/57** (10 ملفات؛ +3) · build ناجح (1882 وحدة) · dev-server: useMapClick/mapPicking/MapView/App/PointsTools بـHTTP 200.
+- **الفحص اليدوي المطلوب (A-5):** دخول وضع النقر · إضافة نقطة على التضاريس بارتفاع صحيح · خروج تلقائي بعد الإضافة · Esc · مؤشر crosshair · AR/EN.
+- الالتزام (بانتظار موافقة المالك): `feat(map): add click-to-add point mode (T2.5)`.
+
+### الجلسة 12 — 2026-10-20 — T2.4: UTM/MGRS + معاينة الصيغ الأربع
+- اعتمادات جديدة: `proj4@2.22.0` + `mgrs@2.2.0` + `zod@4.6.7` (ADR-015/027)؛ تحذيرات `npm audit` الثلاث القديمة (high — dev-only) كما هي ومسجلة في ADR-011.
+- `core/coords/utm.ts`: `wgs84ToUtm(lat, lon)` · `utmToWgs84(...)` · `utmZoneFor(lat, lon)` (تطويق 61→1 + النرويج 32V وسفالبارد 31X/33X/35X/37X) · `formatUtm` · `UtmError`.
+- `core/coords/mgrs.ts`: `wgs84ToMgrs(lat, lon, precision=5)` · `mgrsToWgs84` عبر `toPoint` (مركز الخلية — بديل `reverse` غير الموجود في المكتبة) · `MgrsError`.
+- `lib/validators.ts`: `geoPointDraftSchema` + `geoPointSchema` مطابقان لـGeoPoint (id · lat · lon · height? · accuracy? · label? · source · createdAt).
+- واجهة: مبدّل صيغ (DD/DMS · UTM · MGRS) داخل `ManualPointInput` + معاينة فورية للصيغ الأربع + مصدر النقطة حسب الصيغة + مفاتيح `points.manual.formats|utm|mgrs|preview` (ar/en).
+- قيم مرجعية: UTM من PROJ (pyproj 3.7.2 — مطابقة لمخرجات proj4js) · MGRS من متجهات GEOTRANS الرسمية (`33UXP0500444997` · `11SPA7234911844`).
+- تحقق: lint نظيف · format:check نظيف · test **54/54** (9 ملفات؛ +22) · build ناجح (1880 وحدة؛ الحزمة +230 KB تقريبًا لـproj4/mgrs/zod) · dev-server: utm/mgrs/validators/ManualPointInput/PointsTools بـHTTP 200.
+- **الفحص اليدوي المطلوب من المالك (A-4 المحدّث):** الإدخال بالصيغ الثلاث · صحة معاينة الصيغ الأربع · رسائل الأخطاء · ظهور النقطة المرقّمة على الكرة · AR/EN.
+- الالتزامات بانتظار موافقة المالك: T2.3 `feat(coords): add DD/DMS manual input with live preview (T2.3)` ثم T2.4 `feat(coords): add UTM and MGRS support with zod validation (T2.4)`.
+
+### الجلسة 11 — 2026-10-20 — T2.3: إدخال يدوي DD/DMS + معاينة فورية
+- `core/coords/parsers.ts` بمواصفة المالك مع تصحيحات موثقة (ADR-026): `parseDD` · `parseDMS` (رموز/نقطتان/مسافات + نصف كرة بادئ/لاحق) · `parseCoordinate(input, axis)` بتحقق محوري (±90 للعرض/±180 للطول) وتطابق الاتجاه · `formatDD` · `formatDMS(value, axis?)` (N/S · E/W) مع تقريب كلي يمنع `60.00"`.
+- أخطاء مرمزة (`CoordinateParseError`: invalid · out-of-range · invalid-minutes · invalid-seconds · hemisphere-mismatch) تُترجم من `points.manual.errors.*` (ADR-004) بدل نصوص عربية داخل core.
+- واجهة: `ManualPointInput` داخل أدوات النقاط — حقلان بمعاينة فورية DD↔DMS، خطأ أسفل كل حقل، وزر إضافة (`source: manual`)؛ مفاتيح `points.manual.*` (ar/en) + أنماط CSS.
+- اختبارات: `tests/coords.test.ts` — 15 اختبارًا بقيم مرجعية (الرياض 24.7136/46.6753، تحويل DMS، صيغ النقطتين/المسافات، الحدود، حمل التقريب).
+- تحقق: lint نظيف · format:check نظيف · test **32/32** (6 ملفات؛ +15) · build ناجح (1678 وحدة) · dev-server: parsers/ManualPointInput/PointsTools بـHTTP 200.
+- **الفحص اليدوي المطلوب من المالك (A-4):** إدخال DD وDMS في الحقلين، المعاينة الفورية، رسائل الأخطاء، ظهور النقطة المرقّمة على الكرة، AR/EN.
+- الالتزام (بانتظار موافقة المالك): `feat(coords): add DD/DMS manual input with live preview (T2.3)`.
+
 ### الجلسة 10 — 2026-10-20 — T2.2: «موقعي الحالي» + أول عرض للنقاط على الكرة
 - بمواصفة المالك للهوك + الخطة المعتمدة (ADR-024): `features/points/geolocation.ts` (نقي: positionToGeoPoint + أكواد أخطاء) · `useGeolocation` (نداء واحد، enableHighAccuracy=true، timeout=10s) · `PointsTools` في Sidebar (زر، انتظار، دقة ±م، رسائل أخطاء مترجمة) · `features/map/usePointEntities` (علامة + رقم لكل نقطة) · `useCesiumViewer` يعيد العارض.
 - تعديلات على النموذج (ADR-025): `accuracy?: number` (FR-1) + رسائل الأخطاء أصبحت أكوادًا مترجمة بدل نصوص عربية داخل المنطق (ADR-004) + `label` يُمرَّر مترجمًا من الواجهة.

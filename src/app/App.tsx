@@ -1,9 +1,11 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { Header } from '@/components/Header'
 import { LayerSelector } from '@/components/LayerSelector'
 import { Sidebar } from '@/components/Sidebar'
+import type { GeoPoint } from '@/core/geo/GeoPoint.ts'
 import { MapView } from '@/features/map/MapView'
 import type { BaseLayerId } from '@/features/map/layerSources'
+import type { FlyToRequest } from '@/features/map/useFlyTo'
 import {
   DEFAULT_LAYER_STATE,
   type LayerState,
@@ -11,6 +13,8 @@ import {
 
 export default function App() {
   const [layerState, setLayerState] = useState<LayerState>(DEFAULT_LAYER_STATE)
+  const [isClickMode, setIsClickMode] = useState(false)
+  const [flyToRequest, setFlyToRequest] = useState<FlyToRequest | null>(null)
 
   const changeBaseLayer = (baseLayer: BaseLayerId): void => {
     setLayerState((current) => ({ ...current, baseLayer }))
@@ -19,6 +23,22 @@ export default function App() {
   const toggleLayer = (key: 'labels' | 'terrain'): void => {
     setLayerState((current) => ({ ...current, [key]: !current[key] }))
   }
+
+  const toggleClickMode = useCallback((): void => {
+    setIsClickMode((current) => !current)
+  }, [])
+
+  const endClickMode = useCallback((): void => {
+    setIsClickMode(false)
+  }, [])
+
+  const focusPoint = useCallback((point: GeoPoint): void => {
+    setFlyToRequest({
+      lat: point.lat,
+      lon: point.lon,
+      height: point.height,
+    })
+  }, [])
 
   return (
     <div className="app-shell">
@@ -30,8 +50,17 @@ export default function App() {
         />
       </Header>
       <div className="app-body">
-        <Sidebar />
-        <MapView layerState={layerState} />
+        <Sidebar
+          isClickMode={isClickMode}
+          onToggleClickMode={toggleClickMode}
+          onFocusPoint={focusPoint}
+        />
+        <MapView
+          layerState={layerState}
+          isClickMode={isClickMode}
+          onClickModeEnd={endClickMode}
+          flyToRequest={flyToRequest}
+        />
       </div>
     </div>
   )

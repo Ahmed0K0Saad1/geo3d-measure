@@ -31,12 +31,85 @@
     "myLocation": "My current location",
     "locating": "Locating…",
     "accuracy": "Location accuracy: ±{{meters}} m",
+    "clickMode": "Add by clicking the map",
+    "clickModeActive": "Stop click mode",
+    "clickModeHint": "Click the globe to add a point · Esc to exit.",
+    "search": {
+      "label": "Search by name",
+      "placeholder": "e.g. Riyadh · Kingdom Centre",
+      "loading": "Searching…",
+      "empty": "No matching results.",
+      "attribution": "© OpenStreetMap contributors",
+      "errors": {
+        "network": "Could not reach the search service. Check your connection and try again.",
+        "rate-limited": "Too many requests in a row. Wait a moment and try again.",
+        "invalid-response": "The search service returned an invalid response."
+      }
+    },
+    "panel": {
+      "title": "Point list ({{total}})",
+      "empty": "No points yet. Add one from the tools above.",
+      "unnamed": "Point {{number}}",
+      "labelInput": "Label for point {{number}}",
+      "focus": "Focus",
+      "edit": "Edit",
+      "save": "Save",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "moveUp": "Move point {{number}} up",
+      "moveDown": "Move point {{number}} down"
+    },
     "errors": {
       "unsupported": "Geolocation is not supported in this browser.",
       "permission-denied": "Location permission was denied. Allow it in browser settings and try again.",
       "position-unavailable": "Could not determine your location. Check your connection and try again.",
       "timeout": "Locating timed out. Please try again.",
       "unknown": "An unexpected error occurred while locating."
+    },
+    "manual": {
+      "title": "Manual entry",
+      "format": "Input format",
+      "formats": {
+        "dd": "DD / DMS",
+        "utm": "UTM",
+        "mgrs": "MGRS"
+      },
+      "latitude": "Latitude",
+      "longitude": "Longitude",
+      "add": "Add point",
+      "utm": {
+        "zone": "Zone",
+        "hemisphere": "Hemisphere",
+        "easting": "Easting (m)",
+        "northing": "Northing (m)",
+        "errors": {
+          "invalid-coordinate": "Easting/Northing must be valid numbers.",
+          "out-of-range": "Coordinates are outside the supported UTM range (−80° to 84°).",
+          "invalid-zone": "UTM zone must be an integer between 1 and 60."
+        }
+      },
+      "mgrs": {
+        "label": "MGRS reference",
+        "errors": {
+          "invalid-coordinate": "The MGRS value contains invalid coordinates.",
+          "out-of-range": "Reference is outside the supported range (polar regions are not supported).",
+          "invalid-precision": "MGRS precision must be between 0 and 5.",
+          "invalid-mgrs": "Invalid MGRS reference. Example: 38RPN6945934271"
+        }
+      },
+      "preview": {
+        "dd": "DD",
+        "dms": "DMS",
+        "utm": "UTM",
+        "mgrs": "MGRS"
+      },
+      "errors": {
+        "invalid": "Unrecognized format. Examples: 24.7136 or 24°42′48.96″ N",
+        "out-of-range": "Value out of range: latitude ±90 and longitude ±180.",
+        "invalid-minutes": "Minutes must be between 0 and 60.",
+        "invalid-seconds": "Seconds must be between 0 and 60.",
+        "hemisphere-mismatch": "Direction does not match this field: use N/S for latitude and E/W for longitude."
+      }
     }
   }
 }

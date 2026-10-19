@@ -1,4 +1,6 @@
 import { useTranslation } from 'react-i18next'
+import type { GeoPoint } from '@/core/geo/GeoPoint.ts'
+import { PointsPanel } from '@/features/points/PointsPanel'
 import { PointsTools } from '@/features/points/PointsTools'
 
 const TOOL_KEYS = [
@@ -9,12 +11,26 @@ const TOOL_KEYS = [
   'settings',
 ] as const
 
-export function Sidebar() {
+interface SidebarProps {
+  isClickMode: boolean
+  onToggleClickMode: () => void
+  onFocusPoint: (point: GeoPoint) => void
+}
+
+export function Sidebar({
+  isClickMode,
+  onToggleClickMode,
+  onFocusPoint,
+}: SidebarProps) {
   const { t } = useTranslation()
 
   return (
     <aside className="app-sidebar">
-      <PointsTools />
+      <PointsTools
+        isClickMode={isClickMode}
+        onToggleClickMode={onToggleClickMode}
+      />
+      <PointsPanel onFocusPoint={onFocusPoint} />
       <h2 className="sidebar-title">{t('sidebar.tools')}</h2>
       <nav className="sidebar-tools">
         {TOOL_KEYS.map((key) => (

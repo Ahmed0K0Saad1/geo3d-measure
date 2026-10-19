@@ -31,12 +31,85 @@
     "myLocation": "موقعي الحالي",
     "locating": "جارٍ تحديد الموقع…",
     "accuracy": "دقة الموقع: ±{{meters}} م",
+    "clickMode": "إضافة بنقرة على الخريطة",
+    "clickModeActive": "إنهاء وضع النقر",
+    "clickModeHint": "انقر على سطح الأرض لإضافة نقطة · Esc للخروج.",
+    "search": {
+      "label": "البحث بالاسم",
+      "placeholder": "مثال: الرياض · برج المملكة",
+      "loading": "جارٍ البحث…",
+      "empty": "لا توجد نتائج مطابقة.",
+      "attribution": "© مساهمو OpenStreetMap",
+      "errors": {
+        "network": "تعذّر الاتصال بخدمة البحث. تحقق من اتصالك وحاول مجددًا.",
+        "rate-limited": "طلبات كثيرة متتالية. انتظر لحظة ثم أعد المحاولة.",
+        "invalid-response": "استجابة غير صالحة من خدمة البحث."
+      }
+    },
+    "panel": {
+      "title": "قائمة النقاط ({{total}})",
+      "empty": "لا توجد نقاط بعد. أضف نقطة من الأدوات أعلاه.",
+      "unnamed": "نقطة {{number}}",
+      "labelInput": "تسمية النقطة {{number}}",
+      "focus": "تركيز",
+      "edit": "تعديل",
+      "save": "حفظ",
+      "cancel": "إلغاء",
+      "delete": "حذف",
+      "moveUp": "نقل النقطة {{number}} لأعلى",
+      "moveDown": "نقل النقطة {{number}} لأسفل"
+    },
     "errors": {
       "unsupported": "تحديد الموقع غير مدعوم في هذا المتصفح.",
       "permission-denied": "تم رفض إذن الوصول إلى الموقع. اسمح به من إعدادات المتصفح ثم أعد المحاولة.",
       "position-unavailable": "تعذّر تحديد الموقع حاليًا. تحقق من اتصالك وحاول مجددًا.",
       "timeout": "انتهت مهلة تحديد الموقع. حاول مرة أخرى.",
       "unknown": "حدث خطأ غير متوقع أثناء تحديد الموقع."
+    },
+    "manual": {
+      "title": "إدخال يدوي",
+      "format": "صيغة الإدخال",
+      "formats": {
+        "dd": "DD / DMS",
+        "utm": "UTM",
+        "mgrs": "MGRS"
+      },
+      "latitude": "خط العرض",
+      "longitude": "خط الطول",
+      "add": "إضافة النقطة",
+      "utm": {
+        "zone": "المنطقة",
+        "hemisphere": "نصف الكرة",
+        "easting": "Easting (م)",
+        "northing": "Northing (م)",
+        "errors": {
+          "invalid-coordinate": "قيم Easting/Northing يجب أن تكون أرقامًا صالحة.",
+          "out-of-range": "الإحداثيات خارج نطاق UTM المدعوم (−80° إلى 84°).",
+          "invalid-zone": "منطقة UTM يجب أن تكون عددًا صحيحًا بين 1 و60."
+        }
+      },
+      "mgrs": {
+        "label": "مرجع MGRS",
+        "errors": {
+          "invalid-coordinate": "قيمة MGRS تحتوي إحداثيات غير صالحة.",
+          "out-of-range": "المرجع خارج النطاق المدعوم (المناطق القطبية غير مدعومة).",
+          "invalid-precision": "دقة MGRS يجب أن تكون بين 0 و5.",
+          "invalid-mgrs": "مرجع MGRS غير صالح. مثال: 38RPN6945934271"
+        }
+      },
+      "preview": {
+        "dd": "DD",
+        "dms": "DMS",
+        "utm": "UTM",
+        "mgrs": "MGRS"
+      },
+      "errors": {
+        "invalid": "صيغة غير مفهومة. أمثلة: 24.7136 أو 24°42′48.96″ N",
+        "out-of-range": "القيمة خارج النطاق: خط العرض ±90 وخط الطول ±180.",
+        "invalid-minutes": "الدقائق يجب أن تكون بين 0 و60.",
+        "invalid-seconds": "الثواني يجب أن تكون بين 0 و60.",
+        "hemisphere-mismatch": "الاتجاه لا يناسب الحقل: استخدم N/S لخط العرض وE/W لخط الطول."
+      }
     }
   }
 }

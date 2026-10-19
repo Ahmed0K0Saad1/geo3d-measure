@@ -1,10 +1,20 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { GeocodingSearch } from './GeocodingSearch'
 import { GeolocationError, type GeolocationErrorCode } from './geolocation'
+import { ManualPointInput } from './ManualPointInput'
 import { useGeolocation } from './useGeolocation'
 
-/** أول أدوات إدخال النقاط: «موقعي الحالي» مع حالات الانتظار والأخطاء (T2.2). */
-export function PointsTools() {
+interface PointsToolsProps {
+  isClickMode: boolean
+  onToggleClickMode: () => void
+}
+
+/** أدوات إدخال النقاط: GPS · النقر على الخريطة · البحث · الإدخال اليدوي (T2.2–T2.6). */
+export function PointsTools({
+  isClickMode,
+  onToggleClickMode,
+}: PointsToolsProps) {
   const { t } = useTranslation()
   const { getCurrentPosition } = useGeolocation()
   const [isLocating, setIsLocating] = useState(false)
@@ -46,6 +56,19 @@ export function PointsTools() {
           {t(`points.errors.${errorCode}`)}
         </p>
       )}
+      <button
+        type="button"
+        className="sidebar-tool"
+        aria-pressed={isClickMode}
+        onClick={onToggleClickMode}
+      >
+        {isClickMode ? t('points.clickModeActive') : t('points.clickMode')}
+      </button>
+      {isClickMode && (
+        <p className="points-hint">{t('points.clickModeHint')}</p>
+      )}
+      <GeocodingSearch />
+      <ManualPointInput />
     </section>
   )
 }

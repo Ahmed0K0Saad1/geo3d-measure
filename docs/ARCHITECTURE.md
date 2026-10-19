@@ -34,10 +34,10 @@
 |---|---|---|---|
 | cesium | الكرة الأرضية 3D | MapLibre / Mapbox / Google | معتمد (ADR-001) |
 | react + typescript + vite | الواجهة والبناء | Next.js | معتمد (ADR-002) |
-| zustand | إدارة الحالة | Context API | مقترح (ADR-012) |
+| zustand | إدارة الحالة | Context API | معتمد (ADR-012 ✅) |
 | dexie | IndexedDB | idb / LocalStorage | مقترح (ADR-013) |
-| proj4 + mgrs | تحويلات UTM/MGRS | حسابات يدوية | مقترح (ADR-015) |
-| zod | تحقق مدخلات الإحداثيات | Joi / Yup | مقترح |
+| proj4 + mgrs | تحويلات UTM/MGRS | حسابات يدوية | معتمد (ADR-015 ✅ · T2.4) |
+| zod | تحقق مدخلات الإحداثيات | Joi / Yup | معتمد (T2.4 · ADR-027) |
 | i18next + react-i18next | التعريب | حل مخصص | معتمد مبدأً (ADR-004) |
 | vitest | الاختبارات | Jest | مقترح (ADR-016) |
 | oxlint + prettier | جودة الكود | eslint + typescript-eslint | معتمد (ADR-019) |
@@ -103,13 +103,14 @@ interface SegmentResult {
 ## 5) تكامل Cesium
 - `useCesiumViewer(container, layerState)`: يدير دورة الحياة (إنشاء/تدمير العارض) ويطبّق حالة الطبقات — بلا إعادة إنشاء العارض.
 - مزامنة الكيانات: effect مركزي يقرأ الـStore ويحدّث EntityCollection (نقاط/خطوط/مضلع) — بدون إعادة إنشاء العارض.
+- التركيز على نقطة: `PointsPanel` لا يلمس Cesium؛ يرفع `FlyToRequest` إلى `App` ويستهلكه `useFlyTo` داخل `MapView` (ADR-030).
 - التضاريس من Cesium ion عبر `VITE_CESIUM_ION_TOKEN`؛ خريطة أساس واحدة من ثلاث Esri (World Imagery / Street Map / Topo Map — بلا مفتاح، ADR-020/022)؛ تسميات شفافة اختيارية من Esri World_Boundaries_and_Places فوقها (ADR-021).
 - مبدّل الطبقات المخصص `LayerSelector` (الشريط العلوي): اختيار خريطة الأساس (radio) + إظهار/إخفاء التسميات والتضاريس (checkbox)؛ الحالة في React ويطبّقها `useCesiumViewer` (تبديل متزامن + كاش تضاريس + `errorEvent` لكل طبقة). مصادر الطبقات مركزية في `features/map/layerSources.ts` (ADR-022).
 - رسم المسار: Polyline (يتبع سطح الأرض بسلوك Cesium الافتراضي للخطوط الجيوديسية).
 
 ## 6) Geocoding
-- الواجهة: `GeocoderProvider { search(query): Promise<GeoResult[]> }`.
-- v1: Nominatim مع debounce ≥ 600ms واحترام حد الاستخدام + إسناد OpenStreetMap الظاهر.
+- الواجهة: `GeocodingProvider { search(query, { signal }): Promise<GeocodingResult[]> }` في `services/geocoding.ts`.
+- v1: Nominatim مع debounce 600ms وكاش ومعالجة 429 وإسناد OpenStreetMap الظاهر (ADR-029).
 - بديل جاهز للتبديل: Photon (بدون تغييرات في الواجهة الأمامية).
 
 ## 7) التخزين المحلي
