@@ -4,17 +4,17 @@
 
 | البند | القيمة |
 |---|---|
-| آخر تحديث | 2026-10-19 — الجلسة 4 |
+| آخر تحديث | 2026-10-19 — الجلسة 5 |
 | المرحلة الحالية | **P1 — التهيئة التقنية (Scaffold)** |
-| حالة المرحلة | ⏳ جارية — مكتمل: T1.1–T1.4 (ملتزمة) |
-| المهمة الجارية الآن | لا يوجد — بانتظار A-1 (توكن ion) ثم اعتماد بدء **T1.5** |
-| المهمة التالية | **T1.5 — التوكن + أول كرة أرضية حقيقية** (متوقفة على A-1 من المالك) |
+| حالة المرحلة | ⏳ جارية — مكتمل: T1.1–T1.5 (ملتزمة) · T1.6 قيد التنفيذ |
+| المهمة الجارية الآن | **T1.6 — الهيكل العام للواجهة + i18n أولي (معتمدة — قيد التنفيذ)** |
+| المهمة التالية | **T2.1 — نموذج النقطة + مخزن Zustand** (بعد تفصيل P2 كاملة واعتمادها) |
 | إعاقات تقنية | لا يوجد |
 
 ## بنود معلّقة على المالك (Action Items)
 | # | البند | مطلوب عند |
 |---|---|---|
-| A-1 | إنشاء حساب Cesium ion (Community مجاني) على https://ion.cesium.com واستخراج Access Token | المهمة T1.5 (ليس الآن) |
+| A-1 | ✅ تم — الحساب أُنشئ والتوكن مستلم ومحفوظ في `.env` محلياً (خارج Git) — فحص ion API: HTTP 200 | مُغلق (2026-10-19) |
 
 ## مراجع سريعة
 - المتطلبات المعتمدة: `REQUIREMENTS.md` (v1.0)
@@ -29,6 +29,16 @@
 | OQ-2 | الاسم النهائي للمشروع (الحالي مؤقت: Geo3D Measure) | مفتوح |
 
 ## سجل الجلسات (الأحدث أولًا)
+### الجلسة 5 — 2026-10-19 — T1.5: أول كرة أرضية حقيقية
+- استلام توكن Cesium ion من المالك (A-1 ✅) وحفظه في `.env` محلياً — مؤكد أن Git يتجاهله (`git check-ignore`: `.gitignore:10`)، وصلاحية التوكن حيّة (`Ion API HTTP: 200`) دون طباعة القيمة.
+- `useCesiumViewer` (وفق ARCHITECTURE §5): `Ion.defaultAccessToken` + `Viewer` مع `Terrain.fromWorldTerrain()` + إدارة دورة حياة آمنة مع StrictMode + استيراد `widgets.css`؛ `App` أصبح full-screen؛ `src/types/env.d.ts` يعرّف المتغير بلا any؛ حُذف سطر T1.2 المؤقت (بديله الدائم `tests/cesium.smoke.test.ts`).
+- تحقق آلي: lint نظيف · format:check نظيف · test 3/3 · build ناجح (342 أصلاً؛ الحزمة 4.39 MB / gzip 1.19 MB — تحذير حجم القطعة متوقع ومسجَّل ضمن الخطر R-1) · dev-server: `/` و`widgets.css` والأصول وتحويلات main/App/hook كلها HTTP 200.
+- **الفحص البصري (المحاولة 1) كشف عطلاً:** الكرة بلا صور. التشخيص بالأدلة: استجابة ion للأصل 2 = `{externalType:"BING"}` بلا `url` → كود Cesium 1.146 يوجّهها إلى `BingMapsImageryProvider.fromUrl` (عبر `IonImageryProviderFactory.BING`) → **Bing Maps for Enterprise متقاعدة** (404) → فشل طبقة الصور. التوكن والصلاحيات سليمة (الأصلان 1/2: HTTP 200) و**التضاريس تعمل** (`CesiumTerrainProvider.fromIonAssetId(1)`: نجح كاملاً). خط ArcGIS في الكونسول = عنصر داخل قائمة `BaseLayerPicker` الافتراضية (يتطلب مفتاحاً) وليس سبب العطل.
+- **الإصلاح — ADR-020:** `baseLayerPicker: false` + صور أساسية من **Esri World Imagery** (خدمة REST بلا مفتاح — metadata وبلاطة فعلية وCORS: متحققة) + التضاريس تبقى من ion؛ الملف المتأثر: `useCesiumViewer.ts` (+ تحديث §5 في ARCHITECTURE وسطر T1.5 في ROADMAP).
+- إعادة تحقق آلي بعد الإصلاح: lint نظيف · format:check نظيف · test 3/3 · build ناجح (342 أصلاً) · dev-server: `/` وhook و`widgets.css` بـHTTP 200.
+- **الفحص البصري النهائي (صور + تضاريس + دوران/تقريب) مطلوب من المالك** لتوثيق السيناريو اليدوي.
+- **الالتزام أُنشئ بموافقة المالك:** `feat(map): render real Cesium globe with Esri imagery and ion terrain (T1.5)` — والفحص البصري النهائي يُستكمل مع فحص T1.6.
+
 ### الجلسة 4 — 2026-10-19 — T1.4: هيكل المجلدات النهائي
 - إنشاء الشجرة المعتمدة (`ARCHITECTURE` §3) داخل `src/`: 15 مجلداً جديداً مثبَّتة بـ`.gitkeep` — components · features/{map,points,measure,polygon,export,settings} · core/{geo,coords,units} · services · store · i18n · types · lib.
 - نقل `src/App.tsx → src/app/App.tsx` (نقل بحت؛ المحتوى لم يُمس — سطر T1.2 المؤقت يبقى حتى تستبدله الكرة الأرضية في T1.5) + تحديث استيراد واحد في `main.tsx` إلى `@/app/App.tsx` (أول استخدام فعلي للـalias — مُثبت عبر tsc وVite معاً).

@@ -9,7 +9,18 @@
   box-sizing: border-box;
 }
 
+html,
+body,
+#root {
+  height: 100%;
+}
+
 body {
   margin: 0;
-  min-height: 100vh;
+}
+
+/* حاوية عارض Cesium — تملأ الشاشة (T1.5) */
+.cesium-container {
+  width: 100%;
+  height: 100%;
 }

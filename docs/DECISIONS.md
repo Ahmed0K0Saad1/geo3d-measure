@@ -77,6 +77,12 @@
 - **البدائل المرفوضة:** ESLint + typescript-eslint (أبطأ واعتمادية أثقل دون حاجة فعلية الآن — إعادة النظر ممكنة بقرار جديد)؛ إخضاع التوثيق لدورة التنسيق الآلي (تشويش diffs مصدر-الحقيقة).
 - **الأثر:** أوامر `lint` · `format`/`format:check` · `test` متاحة؛ اختبار دخان يتحقق من توفر Cesium وثوابت WGS84 فقط؛ ملفات الاختبارات و`vitest.config.ts` داخل فحص TS الصارم عبر `tsconfig.node.json`.
 
+## ADR-020 — الصور الأساسية: Esri World Imagery بدل صور ion الافتراضية ✅ (2026-10-19 — T1.5)
+- **السياق:** في الفحص البصري لـT1.5 ظهرت الكرة بلا صور. التشخيص بالأدلة: استجابة ion للأصل 2 = `{externalType:"BING"}` بلا `url` → كود Cesium 1.146 يوجّهها إلى `BingMapsImageryProvider` (عبر `IonImageryProviderFactory.BING`) → **Bing Maps for Enterprise متقاعدة** فترد 404 → فشل طبقة الصور. التوكن والصلاحيات سليمة (الأصلان 1/2: HTTP 200) و**التضاريس تعمل** (`CesiumTerrainProvider.fromIonAssetId(1)` نجح إنشاءً كاملاً). ملاحظة: خط `ibasemaps-api.arcgis.com` في الكونسول = عنصر داخل قائمة `BaseLayerPicker` الافتراضية (يتطلب مفتاحاً) وليس سبب العطل.
+- **القرار:** الصور الأساسية من **Esri World Imagery** عبر خدمة REST الكلاسيكية المجانية بلا مفتاح (`services.arcgisonline.com/.../World_Imagery/MapServer` — وهي مثال توثيق Cesium الرسمي نفسه في `fromUrl`)، مع `baseLayerPicker: false` لمنع الاختيار التلقائي لـBing. **التضاريس تبقى من Cesium ion** (World Terrain).
+- **البدائل المرفوضة:** الإبقاء على صور ion المضبوطة على BING — كلها عائلة متقاعدة (2/3/4) · Sentinel-2 عبر ion (الأصل 3954 غير متاح لهذا الحساب — مفحوص) · ArcGIS basemaps الجديدة `ibasemaps-api.arcgis.com` (تتطلب ArcGIS API key) · OSM (متحقق ويعمل، لكنه خريطة شوارع لا صور أقمار صناعية).
+- **الأثر:** انحراف موثق ومسجَّل في ARCHITECTURE §5؛ توكن ion يبقى لازمًا للتضاريس وخدماته المستقبلية؛ **إسناد Esri مطلوب** في الواجهة (يُدرج ضمن واجهة الإسناد في T1.6/P7)؛ تُراجع المسألة عند معالجة Cesium/ion لتقاعد Bing (مرتبط بـR-2).
+
 ---
 
 ## قالب قرار جديد (انسخه عند الحاجة)
