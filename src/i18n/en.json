@@ -26,6 +26,11 @@
     "labels": "Labels & boundaries",
     "terrain": "3D terrain"
   },
+  "measure": {
+    "method": {
+      "haversine": "Haversine — WGS84 spherical approximation"
+    }
+  },
   "points": {
     "title": "Points",
     "myLocation": "My current location",

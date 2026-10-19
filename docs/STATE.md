@@ -4,11 +4,11 @@
 
 | البند | القيمة |
 |---|---|
-| آخر تحديث | 2026-10-20 — الجلسة 15 |
-| المرحلة الحالية | **P2 مغلقة ✅ (T2.1–T2.7) — التالية: تفصيل P3 واعتماده قبل T3.1** |
-| حالة المرحلة | ✅ مغلقة بقرار المالك (2026-10-20) — الفحوص اليدوية A-2..A-7 تبقى بنود قبول بصري معلّقة |
-| المهمة الجارية الآن | **لا مهمة جارية — P2 مغلقة؛ لا بدء لـP3 قبل اعتماد تفصيلها** |
-| المهمة التالية | **تفصيل مرحلة P3 (T3.1–T3.5) وعرضها على المالك — لا تنفيذ قبل الاعتماد** |
+| آخر تحديث | 2026-10-20 — الجلسة 16 |
+| المرحلة الحالية | **P3 مغلقة ✅ (T3.1–T3.5) — التالية: تفصيل P4 واعتمادها قبل T4.1** |
+| حالة المرحلة | ✅ مغلقة تقنيًا (94/94) — الفحوص اليدوية A-2..A-7 تبقى بنود قبول بصري معلّقة |
+| المهمة الجارية الآن | **لا مهمة جارية — P3 مغلقة؛ لا بدء لـP4 قبل اعتماد تفصيلها** |
+| المهمة التالية | **تفصيل مرحلة P4 (T4.1–T4.4) وعرضها على المالك — لا تنفيذ قبل الاعتماد** |
 | إعاقات تقنية | لا يوجد |
 
 ## بنود معلّقة على المالك (Action Items)
@@ -36,6 +36,14 @@
 | OQ-3 | إضافة هامش دقة GPS إلى نموذج GeoPoint (مطلوب لـFR-1) | مغلق — أُضيف `accuracy` في T2.2 (ADR-025) |
 
 ## سجل الجلسات (الأحدث أولًا)
+### الجلسة 16 — 2026-10-20 — P3: محرك القياس (T3.1–T3.5)
+- جديد: `src/core/geo/strategy.ts` (`SegmentResult` · `DistanceStrategy` · `DistanceStrategyRegistry`) · `registry.ts` (`StrategyRegistry` — آخر تسجيل لنفس `id` يفوز) · `haversine.ts` (`HaversineStrategy`; R=6371008.8 م · تقييد `h` · تطبيع الاتجاه · حالة النقطة المطابقة) · `path.ts` (`computePath`) · `src/core/units/converters.ts` (m↔km/nm/mi/ft بلا نصوص) · `tests/measure.test.ts` (18 اختبارًا) · `tests/units.test.ts` (5) · `tests/fixtures/geodesic-reference.json`.
+- تصحيحات على مسودة المالك (ADR-032): استيراد `GeoPoint` · `import type` · إزالة حرف دخيل من `registry.ts` · النقطة المطابقة اتجاه 0 بدل 180 · تقييد `h` · إزالة `formatDistance` العربية من `core` · fixtures بدل الحدود الفضفاضة · اختبارات Registry وحماية `computePath`.
+- مراجع: GeographicLib 2.1 WGS84 — ويلينغتون→سالامانكا 19,959,679.267 م (فرق Haversine +0.0387%) · بكين→سان فرانسيسكو 9,513,998 م واتجاهات 42.91642°/138.89027° (فرق 0.033°/0.024°) — حد 0.5%.
+- تحقق: lint نظيف · format:check نظيف · test **94/94** (15 ملفًا؛ +23) · build ناجح (1888 وحدة).
+- **P3 مكتملة تقنيًا** — لا بدء لـP4 قبل تفصيلها واعتمادها.
+- الالتزام: `feat(measure): haversine engine with bearing, path aggregation, and reference tests (P3)`.
+
 ### الجلسة 15 — 2026-10-20 — T2.7: قائمة النقاط + إغلاق P2 تقنيًا
 - جديد: `features/points/PointsPanel.tsx` (ترقيم 1..n · تسمية داخلية حفظ/إلغاء/Enter/Esc · حذف مع تصفير الاختيار · ترتيب أعلى/أسفل · تركيز) · `features/map/useFlyTo.ts` (`FlyToRequest` + `camera.flyTo` بارتفاع `max(height+2000, 2000)` للتركيز) · `lib/collections.ts` (`moveItem` نقية) · `tests/collections.test.ts` (4) · `tests/flyTo.test.ts` (3).
 - تعديلات: `App` (حالة `flyToRequest` + `focusPoint`) · `Sidebar` (تركيب PointsPanel وتمرير `onFocusPoint`) · `MapView` (استهلاك `useFlyTo`) · `index.css` (أنماط القائمة) · مفاتيح `points.panel.*` (ar/en) · `ARCHITECTURE §5/§6` (توثيق فصل Cesium وواجهة geocoding).

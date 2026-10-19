@@ -26,6 +26,11 @@
     "labels": "الأسماء والحدود",
     "terrain": "التضاريس ثلاثية الأبعاد"
   },
+  "measure": {
+    "method": {
+      "haversine": "Haversine — WGS84 كروي تقريبي"
+    }
+  },
   "points": {
     "title": "النقاط",
     "myLocation": "موقعي الحالي",

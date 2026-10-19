@@ -65,8 +65,9 @@
 - **السبب:** مرجعية ومختبرة لتحويلات UTM/MGRS؛ parsers DD/DMS تكتب يدويًا (بسيطة وقابلة للاختبار).
 - **التنفيذ:** `proj4@2.22.0` + `mgrs@2.2.0` داخل `core/coords/utm.ts` و`mgrs.ts` مع أخطاء مرمزة — تفاصيل التكييفات في ADR-027.
 
-## ADR-016 — الاختبارات: Vitest + Fixtures مرجعية 🕓 (يُعتمد في P3)
-- **القرار المقترح:** قيم مرجعية تُولَّد من GeographicLib وتُخزَّن JSON؛ اختبارات حدود نظرية للفرق الكروي/الإهليلجي.
+## ADR-016 — الاختبارات: Vitest + Fixtures مرجعية ✅ (اعتُمد فعليًا في P3 — 2026-10-20)
+- **القرار:** قيم مرجعية من GeographicLib 2.1 (WGS84) تُخزَّن JSON في `tests/fixtures`؛ اختبارات حدود نظرية للفرق الكروي/الإهليلجي (0.5%).
+- **التنفيذ:** `tests/fixtures/geodesic-reference.json` + `tests/measure.test.ts` (ADR-032).
 
 ## ADR-017 — المساحة الجيوديسية: مكتبة GeographicLib (PolygonArea) 🕓 (يُعتمد في P5)
 - **السبب:** الدقة القياسية عالميًا (خوارزمية Karney) بدل تنفيذ ذاتي قابل للخطأ.
@@ -173,6 +174,20 @@
 - **القرار:** المالك أمر بإغلاق P2 والالتزام بالعمل. تُعد P2 مغلقة تقنيًا، وتبقى A-2..A-7 بنود قبول بصري معلّقة تُنفّذ عند أول جلسة متصفح؛ أي خلل يفتح مهمة إصلاح لاحقة.
 - **البدائل المرفوضة:** تأجيل الإغلاق حتى الفحص البصري (يعطّل P3) · اعتبار الفحص البصري منجزًا دون تنفيذ.
 - **الأثر:** P3 هي التالية، ولا بدء لها قبل تفصيلها واعتمادها من المالك.
+
+## ADR-032 — محرك القياس: Haversine + استراتيجية قابلة للتوسعة ✅ (2026-10-20 — P3)
+- **السياق:** تحتاج P3 إلى عقد استراتيجية مسافة (Strategy) للتوسع نحو Vincenty/Karney لاحقًا، مع نتيجة تحمل اسم المنهجية (FR-14) واختبارات مرجعية. ADR-003 يحسم المبدأ، وهذا القرار يثبّت تفاصيل التنفيذ. (الرقم 031 محجوز لقرار إغلاق P2.)
+- **القرار:**
+  1. `src/core/geo/strategy.ts`: `DistanceStrategy { id, labelKey, compute(a,b) }` + `SegmentResult { meters, initialBearingDeg, finalBearingDeg, method }` + `DistanceStrategyRegistry`.
+  2. `StrategyRegistry` بـ`Map`؛ آخر تسجيل لنفس `id` يستبدل السابق (يتيح استبدال الاستراتيجية عبر الإعداد لاحقًا).
+  3. `HaversineStrategy` فقط في v1، بنصف قطر `6371008.8` م (REQUIREMENTS §6)؛ تُقيَّد `h` إلى `[0,1]` لمنع `NaN` العائم.
+  4. النقطة المطابقة (مسافة 0) ← الاتجاهان 0 لأن الاتجاه غير معرّف؛ عدا ذلك `finalBearing = (initialBearing(b,a)+180) mod 360`. الحالة المتضادة (antipodal) غير معرّفة الاتجاه.
+  5. الوحدات في `src/core/units/converters.ts` دوال نقية فقط (m↔km · m↔nm=1852 · m↔mi=1609.344 · m↔ft=0.3048)؛ لا نصوص واجهة في `core` (ADR-004/008)، والتنسيق في P4.
+  6. `computePath(points, strategy)` يقبل `DistanceStrategy` ويعيد `segments` + `totalMeters`؛ أقل من نقطتين ← نتيجة فارغة.
+  7. اختبارات مرجعية من GeographicLib 2.1 WGS84 في `tests/fixtures/geodesic-reference.json`: ويلينغتون→سالامانكا `19,959,679.267` م (فرق Haversine المرصود `+0.0387%`)، وبكين→سان فرانسيسكو `9,513,998` م واتجاهات `42.91642°/138.89027°` (فرق الاتجاه المرصود `0.033°/0.024°`)؛ حد المسافة `0.5%`.
+- **تصحيحات على مسودة المالك:** استيراد `GeoPoint` واستخدام `import type`؛ إزالة حرف دخيل من `registry.ts`؛ حالة النقطة المطابقة (اتجاه 0 بدل 180)؛ تقييد `h`؛ إزالة `formatDistance` العربية من `core`؛ استبدال الحدود الفضفاضة بـfixtures؛ إضافة اختبارات Registry وحماية `computePath`.
+- **البدائل المرفوضة:** تنفيذ Vincenty في v1 (غير مطلوب الآن) · حساب 3D chord (خارج نطاق v1) · تنسيق الوحدات بنصوص عربية داخل `core` (مخالفة ADR-004) · حدود اختبار فضفاضة بلا fixtures.
+- **الأثر:** `src/core/geo/{strategy,registry,haversine,path}.ts` · `src/core/units/converters.ts` · `tests/measure.test.ts` · `tests/units.test.ts` · `tests/fixtures/geodesic-reference.json` · مفتاح `measure.method.haversine` في `ar.json`/`en.json`. يُفعّل ADR-016 عمليًا.
 
 ---
 

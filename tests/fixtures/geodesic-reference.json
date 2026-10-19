@@ -1,0 +1,21 @@
+{
+  "source": "GeographicLib 2.1 (WGS84) — https://geographiclib.sourceforge.io/html/python/examples.html",
+  "tolerancePercent": 0.5,
+  "bearingToleranceDeg": 0.1,
+  "cases": [
+    {
+      "name": "Wellington NZ → Salamanca ES",
+      "from": { "lat": -41.32, "lon": 174.81 },
+      "to": { "lat": 40.96, "lon": -5.5 },
+      "geodesicMeters": 19959679.267
+    },
+    {
+      "name": "Beijing → San Francisco",
+      "from": { "lat": 40.1, "lon": 116.6 },
+      "to": { "lat": 37.6, "lon": -122.4 },
+      "geodesicMeters": 9513998,
+      "geodesicInitialBearingDeg": 42.91642,
+      "geodesicFinalBearingDeg": 138.89027
+    }
+  ]
+}
