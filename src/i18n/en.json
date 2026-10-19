@@ -25,5 +25,18 @@
     "topographic": "Topographic map",
     "labels": "Labels & boundaries",
     "terrain": "3D terrain"
+  },
+  "points": {
+    "title": "Points",
+    "myLocation": "My current location",
+    "locating": "Locating…",
+    "accuracy": "Location accuracy: ±{{meters}} m",
+    "errors": {
+      "unsupported": "Geolocation is not supported in this browser.",
+      "permission-denied": "Location permission was denied. Allow it in browser settings and try again.",
+      "position-unavailable": "Could not determine your location. Check your connection and try again.",
+      "timeout": "Locating timed out. Please try again.",
+      "unknown": "An unexpected error occurred while locating."
+    }
   }
 }

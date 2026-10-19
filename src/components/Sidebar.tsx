@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { PointsTools } from '@/features/points/PointsTools'
 
 const TOOL_KEYS = [
   'points',
@@ -13,6 +14,7 @@ export function Sidebar() {
 
   return (
     <aside className="app-sidebar">
+      <PointsTools />
       <h2 className="sidebar-title">{t('sidebar.tools')}</h2>
       <nav className="sidebar-tools">
         {TOOL_KEYS.map((key) => (

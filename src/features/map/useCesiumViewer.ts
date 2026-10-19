@@ -1,4 +1,4 @@
-import { useEffect, useRef, type RefObject } from 'react'
+import { useEffect, useRef, useState, type RefObject } from 'react'
 import {
   ArcGisMapServerImageryProvider,
   CesiumTerrainProvider,
@@ -68,8 +68,9 @@ function createEsriLayer(url: string, errorLabel: string): ImageryLayer {
 export function useCesiumViewer(
   containerRef: RefObject<HTMLDivElement | null>,
   layerState: LayerState,
-): void {
+): Viewer | null {
   const viewerRef = useRef<Viewer | null>(null)
+  const [activeViewer, setActiveViewer] = useState<Viewer | null>(null)
   const baseLayerRef = useRef<ImageryLayer | null>(null)
   const appliedBaseIdRef = useRef<BaseLayerId | null>(null)
   const labelsLayerRef = useRef<ImageryLayer | null>(null)
@@ -92,10 +93,12 @@ export function useCesiumViewer(
     })
 
     viewerRef.current = viewer
+    setActiveViewer(viewer)
 
     return () => {
       viewer.destroy()
       viewerRef.current = null
+      setActiveViewer(null)
       baseLayerRef.current = null
       appliedBaseIdRef.current = null
       labelsLayerRef.current = null
@@ -163,4 +166,6 @@ export function useCesiumViewer(
       viewer.terrainProvider = flatTerrain
     }
   }, [layerState])
+
+  return activeViewer
 }

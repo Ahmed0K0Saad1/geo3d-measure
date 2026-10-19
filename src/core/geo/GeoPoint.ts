@@ -10,6 +10,8 @@ export interface GeoPoint {
   lon: number
   /** الارتفاع عن سطح المجسم الإهليلجي بالمتر (اختياري). */
   height?: number
+  /** هامش دقة GPS بالمتر — FR-1 (ADR-025). */
+  accuracy?: number
   /** تسمية اختيارية تعرضها الواجهة. */
   label?: string
   /** مصدر إدخال النقطة. */

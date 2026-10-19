@@ -135,6 +135,28 @@ body {
   opacity: 0.55;
 }
 
+/* ===== أدوات إدخال النقاط — T2.2 ===== */
+
+.points-tools {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-bottom: 12px;
+  border-block-end: 1px solid #e5e9ef;
+}
+
+.points-hint {
+  margin: 0;
+  font-size: 12px;
+  color: #46515f;
+}
+
+.points-error {
+  margin: 0;
+  font-size: 12px;
+  color: #b42318;
+}
+
 /* حاوية عارض Cesium — تملأ ما تبقى من الشاشة (T1.6) */
 .map-view {
   position: relative;
