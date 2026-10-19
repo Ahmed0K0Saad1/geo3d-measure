@@ -15,5 +15,11 @@
     "polygon": "Polygon & area",
     "export": "Export",
     "settings": "Settings"
+  },
+  "layers": {
+    "title": "Layers",
+    "imagery": "Satellite imagery",
+    "labels": "Labels & boundaries",
+    "terrain": "3D terrain"
   }
 }

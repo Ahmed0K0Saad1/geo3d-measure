@@ -1,9 +1,14 @@
+import { type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { setLanguage, type AppLanguage } from '@/i18n/i18n'
 
 const LANGUAGES: AppLanguage[] = ['ar', 'en']
 
-export function Header() {
+interface HeaderProps {
+  children?: ReactNode
+}
+
+export function Header({ children }: HeaderProps) {
   const { t, i18n } = useTranslation()
   const currentLanguage: AppLanguage =
     i18n.resolvedLanguage === 'en' ? 'en' : 'ar'
@@ -12,6 +17,7 @@ export function Header() {
     <header className="app-header">
       <h1 className="app-title">{t('app.title')}</h1>
       <div className="app-header-controls">
+        {children}
         <div
           className="language-switch"
           role="group"

@@ -21,7 +21,7 @@
 │                             │   │  units/ التحويل والعرض               │
 └───────────────┬─────────────┘   └──────────────────────────────────────┘
                 │                               │
-      [Esri + ion: صور · تضاريس]   [Services: geocoding · storage · export]
+      [Esri + ion: صور · تسميات · تضاريس]   [Services: geocoding · storage · export]
 ```
 
 **مبادئ معمارية:**
@@ -103,7 +103,8 @@ interface SegmentResult {
 ## 5) تكامل Cesium
 - `useCesiumViewer(container)`: يدير دورة الحياة (إنشاء/تدمير العارض).
 - مزامنة الكيانات: effect مركزي يقرأ الـStore ويحدّث EntityCollection (نقاط/خطوط/مضلع) — بدون إعادة إنشاء العارض.
-- التضاريس من Cesium ion عبر `VITE_CESIUM_ION_TOKEN`؛ الصور الأساسية من Esri World Imagery (بلا مفتاح — ADR-020).
+- التضاريس من Cesium ion عبر `VITE_CESIUM_ION_TOKEN`؛ الصور الأساسية من Esri World Imagery (بلا مفتاح — ADR-020)؛ تسميات شفافة اختيارية من Esri World_Boundaries_and_Places (ADR-021).
+- مبدّل الطبقات المخصص `LayerSelector` (الشريط العلوي) يتحكم بإظهار: الصور / التسميات / التضاريس؛ حالة الإظهار في React ويطبّقها `useCesiumViewer` (بدون إعادة إنشاء العارض).
 - رسم المسار: Polyline (يتبع سطح الأرض بسلوك Cesium الافتراضي للخطوط الجيوديسية).
 
 ## 6) Geocoding

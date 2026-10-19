@@ -1,10 +1,14 @@
 import { useRef } from 'react'
-import { useCesiumViewer } from './useCesiumViewer'
+import { useCesiumViewer, type LayerVisibility } from './useCesiumViewer'
 
-export function MapView() {
+interface MapViewProps {
+  layerVisibility: LayerVisibility
+}
+
+export function MapView({ layerVisibility }: MapViewProps) {
   const containerRef = useRef<HTMLDivElement>(null)
 
-  useCesiumViewer(containerRef)
+  useCesiumViewer(containerRef, layerVisibility)
 
   return <div ref={containerRef} className="map-view" />
 }

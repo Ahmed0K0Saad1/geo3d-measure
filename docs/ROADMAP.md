@@ -45,6 +45,7 @@
 - [x] **T1.6 — الهيكل العام للواجهة + i18n أولي** `M` ☑ — Header (مبدّل AR/EN فوري + وحدات placeholder) + Sidebar (أدوات مستقبلية معطلة) + MapView · i18next + react-i18next مع `ar.json`/`en.json` + مزامنة lang/dir (RTL↔LTR) + اختبار تطابق المفاتيح — تحقق: lint · format:check · test 4/4 · build · dev-server 200 — الالتزام: `feat(ui): initial shell layout with AR/EN i18n (T1.6)`.
   1. Header (اللغة/الوحدات) + Sidebar (منطقة الأدوات) + Map (تملأ الباقي).
   2. إعداد react-i18next مع `ar.json`/`en.json` + تبديل RTL/LTR فوري.
+- [x] **T1.7 — مبدّل الطبقات المخصص (LayerSelector)** `M` ☑ — ثلاث طبقات عاملة: Esri World Imagery + Esri World Boundaries & Places (تسميات شفافة) + ion World Terrain · قائمة منسدلة في الشريط العلوي (RTL/LTR، إغلاق بنقرة خارجية/Escape) · حالة الإظهار في React والـhook يطبّقها (كاش للتضاريس + معالجة أخطاء الطبقات) · مفاتيح `layers.*` في ar/en (ADR-021) — تحقق: lint · format:check · test 4/4 · build · dev-server 200 — الالتزام: `feat(map): add custom layer selector with working Esri and ion layers`.
 
 **DoD المرحلة P1:** تطبيق يعمل محليًا: كرة أرضية بتضاريس + واجهة بهويتين لغويتين + جودة كود مفعّلة + اختبار يمر — **☑ محقق (الجلسة 6).**
 
