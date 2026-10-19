@@ -101,10 +101,10 @@ interface SegmentResult {
 - توثيق الفرق النظري حتى ~0.5% مقارنة بالإهليلجي داخل الواجهة والتوثيق.
 
 ## 5) تكامل Cesium
-- `useCesiumViewer(container)`: يدير دورة الحياة (إنشاء/تدمير العارض).
+- `useCesiumViewer(container, layerState)`: يدير دورة الحياة (إنشاء/تدمير العارض) ويطبّق حالة الطبقات — بلا إعادة إنشاء العارض.
 - مزامنة الكيانات: effect مركزي يقرأ الـStore ويحدّث EntityCollection (نقاط/خطوط/مضلع) — بدون إعادة إنشاء العارض.
-- التضاريس من Cesium ion عبر `VITE_CESIUM_ION_TOKEN`؛ الصور الأساسية من Esri World Imagery (بلا مفتاح — ADR-020)؛ تسميات شفافة اختيارية من Esri World_Boundaries_and_Places (ADR-021).
-- مبدّل الطبقات المخصص `LayerSelector` (الشريط العلوي) يتحكم بإظهار: الصور / التسميات / التضاريس؛ حالة الإظهار في React ويطبّقها `useCesiumViewer` (بدون إعادة إنشاء العارض).
+- التضاريس من Cesium ion عبر `VITE_CESIUM_ION_TOKEN`؛ خريطة أساس واحدة من ثلاث Esri (World Imagery / Street Map / Topo Map — بلا مفتاح، ADR-020/022)؛ تسميات شفافة اختيارية من Esri World_Boundaries_and_Places فوقها (ADR-021).
+- مبدّل الطبقات المخصص `LayerSelector` (الشريط العلوي): اختيار خريطة الأساس (radio) + إظهار/إخفاء التسميات والتضاريس (checkbox)؛ الحالة في React ويطبّقها `useCesiumViewer` (تبديل متزامن + كاش تضاريس + `errorEvent` لكل طبقة). مصادر الطبقات مركزية في `features/map/layerSources.ts` (ADR-022).
 - رسم المسار: Polyline (يتبع سطح الأرض بسلوك Cesium الافتراضي للخطوط الجيوديسية).
 
 ## 6) Geocoding

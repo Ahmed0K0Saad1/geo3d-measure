@@ -89,6 +89,12 @@
 - **البدائل المرفوضة:** إعادة `BaseLayerPicker` المدمج (عناصر ميتة/تتطلب مفتاحاً) · إحياء `assetId: 3` (عائلة Bing → 401) · خيار `imageryProvider` في Viewer (غير موجود في تعريفات 1.146 — الصحيح `baseLayer`، و`IonImageryProvider` يُستدعى حصراً عبر `fromAssetId`).
 - **الأثر:** مفاتيح `layers.*` في `ar.json`/`en.json` (يفرضها اختبار تطابق المفاتيح) · مكوّن `LayerSelector` في `src/components` · إسناد Esri قائم (ADR-020).
 
+## ADR-022 — توسيع مبدّل الطبقات: ثلاث خرائط أساس Esri + طبقات إضافية ✅ (2026-10-20 — T1.7 extension)
+- **السياق:** طلب المالك توسيع `LayerSelector` إلى مجموعة خرائط أساس شبيهة بقائمة ArcGIS الأصلية (صور/شوارع/طبوغرافية) مع بقاء التسميات والتضاريس. تحقق حي قبل التنفيذ (2026-10-20): World Street Map وWorld Topo Map: metadata 200 + بلاطة 200 + CORS `*` (بلا مفتاح) — والمصدران السابقان (Imagery وBoundaries) كما هما.
+- **القرار:** (1) الحالة أصبحت `LayerState { baseLayer: BaseLayerId; labels; terrain }` حيث `BaseLayerId = imagery | streets | topographic` — خريطة أساس **واحدة** بنمط radio + التسميات والتضاريس خياران مستقلان. (2) مصدر حقيقة واحد للثوابت في `features/map/layerSources.ts` (الأنواع + عناوين ArcGIS الثلاثة + التسميات + `WORLD_TERRAIN_ASSET_ID = 1`) — ليكون قابلاً للاختبار في Node بمعزل عن Cesium (استيراد الـhook مباشرةً يستورد `widgets.css` ويتطلب توكن ion في مستوى الوحدة). (3) التبديل **متزامن**: `imageryLayers.remove(previous, true)` ثم `add(nextLayer, 0)` (في الأسفل) كي تبقى التسميات فوق أي أساس — بلا debounce (لا سباق في Cesium أصلاً؛ الحماية الفعلية: `errorEvent` مستقل لكل طبقة + حارس التضاريس غير المتزامنة والكاش القائمين). (4) عناصر القائمة `<input type="radio/checkbox">` أصلية (دلالات ARIA ولوحة مفاتيح مجاناً) بدل أزرار مخصصة؛ زر الأيقونة يحتفظ بـ`aria-expanded`، والإغلاق خارجياً/Escape كما في ADR-021.
+- **البدائل المرفوضة:** debounce 150ms (تأخير محسوس بلا حماية إضافية — التبديل متزامن) · إعادة تفعيل `BaseLayerPicker` المدمج (ADR-020/021) · اختبار الـhook مباشرةً في Node (مستحيل بلا DOM/Cesium Viewer) — عُوّض باختبار ثوابت المصادر.
+- **الأثر:** ملف جديد `layerSources.ts` + اختبار `tests/layers.test.ts` (يحرس: 3 مصادر Esri فقط، صفر Bing/virtualearth، تسميات Esri، أصل التضاريس 1) · `LayerSelector`/`useCesiumViewer`/`MapView`/`App`/`index.css`/`ar.json`/`en.json` · مفاتيح `layers.*` الثمانية · إسناد Esri يبقى مستحقاً في الواجهة (ADR-020).
+
 ---
 
 ## قالب قرار جديد (انسخه عند الحاجة)

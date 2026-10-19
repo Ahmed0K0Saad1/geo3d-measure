@@ -142,7 +142,7 @@ body {
   min-width: 0;
 }
 
-/* ===== مبدّل الطبقات المخصص — T1.7 ===== */
+/* ===== مبدّل الطبقات المخصص — T1.7 + توسعته ===== */
 
 .layer-selector {
   position: relative;
@@ -183,38 +183,38 @@ body {
   box-shadow: 0 8px 24px rgb(15 23 42 / 0.12);
 }
 
-.layer-menu-item {
+.layer-menu-heading {
+  margin: 6px 6px 2px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #667485;
+}
+
+.layer-menu-heading:not(:first-child) {
+  margin-top: 8px;
+  padding-top: 10px;
+  border-block-start: 1px solid #e5e9ef;
+}
+
+.layer-menu-option {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 10px;
-  font: inherit;
+  padding: 7px 8px;
   font-size: 14px;
-  color: inherit;
-  text-align: start;
-  background: transparent;
-  border: 0;
   border-radius: 6px;
   cursor: pointer;
 }
 
-.layer-menu-item:hover {
+.layer-menu-option:hover {
   background: #f2f5f9;
 }
 
-.layer-check {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 18px;
-  font-size: 12px;
-  line-height: 1;
-  color: #ffffff;
-  background: #c3cad4;
-  border-radius: 4px;
-}
-
-.layer-menu-item[aria-pressed='true'] .layer-check {
-  background: #1f6feb;
+.layer-input {
+  width: 15px;
+  height: 15px;
+  margin: 0;
+  accent-color: #1f6feb;
+  cursor: pointer;
 }

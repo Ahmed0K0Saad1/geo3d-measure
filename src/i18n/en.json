@@ -18,7 +18,11 @@
   },
   "layers": {
     "title": "Layers",
+    "baseMaps": "Base map",
+    "overlays": "Additional layers",
     "imagery": "Satellite imagery",
+    "streets": "Street map",
+    "topographic": "Topographic map",
     "labels": "Labels & boundaries",
     "terrain": "3D terrain"
   }

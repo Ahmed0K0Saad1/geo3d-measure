@@ -1,26 +1,28 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import type { LayerVisibility } from '@/features/map/useCesiumViewer'
-
-const LAYER_KEYS: Array<keyof LayerVisibility> = [
-  'imagery',
-  'labels',
-  'terrain',
-]
+import { BASE_LAYER_IDS, type BaseLayerId } from '@/features/map/layerSources'
+import type { LayerState } from '@/features/map/useCesiumViewer'
 
 interface LayerSelectorProps {
-  visibility: LayerVisibility
-  onToggle: (key: keyof LayerVisibility) => void
+  state: LayerState
+  onBaseLayerChange: (baseLayer: BaseLayerId) => void
+  onToggle: (key: 'labels' | 'terrain') => void
 }
 
 /**
- * قائمة طبقات مخصصة (ADR-021): بديل BaseLayerPicker المدمج الذي أُوقف
+ * قائمة طبقات مخصصة (ADR-021/022): بديل BaseLayerPicker المدمج الذي أُوقف
  * لأن بنوده الافتراضية تشير إلى خدمات ميتة (Bing) أو تتطلب مفاتيح.
+ * خريطة أساس واحدة (radio) + طبقات إضافية (checkbox).
  */
-export function LayerSelector({ visibility, onToggle }: LayerSelectorProps) {
+export function LayerSelector({
+  state,
+  onBaseLayerChange,
+  onToggle,
+}: LayerSelectorProps) {
   const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
+  const triggerRef = useRef<HTMLButtonElement>(null)
 
   // إغلاق عند النقر خارج القائمة أو بمفتاح Escape
   useEffect(() => {
@@ -39,6 +41,7 @@ export function LayerSelector({ visibility, onToggle }: LayerSelectorProps) {
     const handleKeyDown = (event: KeyboardEvent): void => {
       if (event.key === 'Escape') {
         setOpen(false)
+        triggerRef.current?.focus()
       }
     }
 
@@ -54,6 +57,7 @@ export function LayerSelector({ visibility, onToggle }: LayerSelectorProps) {
   return (
     <div className="layer-selector" ref={containerRef}>
       <button
+        ref={triggerRef}
         type="button"
         className="layer-selector-button"
         aria-expanded={open}
@@ -80,20 +84,39 @@ export function LayerSelector({ visibility, onToggle }: LayerSelectorProps) {
 
       {open && (
         <div className="layer-menu" role="group" aria-label={t('layers.title')}>
-          {LAYER_KEYS.map((key) => (
-            <button
-              key={key}
-              type="button"
-              className="layer-menu-item"
-              aria-pressed={visibility[key]}
-              onClick={() => onToggle(key)}
-            >
-              <span className="layer-check" aria-hidden="true">
-                {visibility[key] ? '✓' : ''}
-              </span>
-              <span>{t(`layers.${key}`)}</span>
-            </button>
+          <p className="layer-menu-heading">{t('layers.baseMaps')}</p>
+          {BASE_LAYER_IDS.map((id) => (
+            <label key={id} className="layer-menu-option">
+              <input
+                type="radio"
+                name="geo3d-base-layer"
+                className="layer-input"
+                checked={state.baseLayer === id}
+                onChange={() => onBaseLayerChange(id)}
+              />
+              <span>{t(`layers.${id}`)}</span>
+            </label>
           ))}
+
+          <p className="layer-menu-heading">{t('layers.overlays')}</p>
+          <label className="layer-menu-option">
+            <input
+              type="checkbox"
+              className="layer-input"
+              checked={state.labels}
+              onChange={() => onToggle('labels')}
+            />
+            <span>{t('layers.labels')}</span>
+          </label>
+          <label className="layer-menu-option">
+            <input
+              type="checkbox"
+              className="layer-input"
+              checked={state.terrain}
+              onChange={() => onToggle('terrain')}
+            />
+            <span>{t('layers.terrain')}</span>
+          </label>
         </div>
       )}
     </div>
