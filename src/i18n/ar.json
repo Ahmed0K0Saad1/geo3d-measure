@@ -1,0 +1,19 @@
+{
+  "app": {
+    "title": "Geo3D Measure"
+  },
+  "header": {
+    "language": "اللغة",
+    "units": "الوحدات",
+    "unitsMetric": "متري (م · كم)",
+    "comingSoon": "قريباً"
+  },
+  "sidebar": {
+    "tools": "الأدوات",
+    "points": "إدارة النقاط",
+    "measure": "قياس المسافة",
+    "polygon": "المضلع والمساحة",
+    "export": "التصدير",
+    "settings": "الإعدادات"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "app": {
+    "title": "Geo3D Measure"
+  },
+  "header": {
+    "language": "Language",
+    "units": "Units",
+    "unitsMetric": "Metric (m · km)",
+    "comingSoon": "Coming soon"
+  },
+  "sidebar": {
+    "tools": "Tools",
+    "points": "Points",
+    "measure": "Measure distance",
+    "polygon": "Polygon & area",
+    "export": "Export",
+    "settings": "Settings"
+  }
+}

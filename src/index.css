@@ -1,6 +1,7 @@
 :root {
   font-family: system-ui, 'Segoe UI', Tahoma, Arial, sans-serif;
   line-height: 1.5;
+  color: #1f2937;
 }
 
 *,
@@ -17,10 +18,124 @@ body,
 
 body {
   margin: 0;
+  background: #eef1f5;
 }
 
-/* حاوية عارض Cesium — تملأ الشاشة (T1.5) */
-.cesium-container {
-  width: 100%;
+/* ===== هيكل التطبيق: Header + (Sidebar | Map) — T1.6 ===== */
+
+.app-shell {
+  display: flex;
+  flex-direction: column;
   height: 100%;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 52px;
+  padding: 0 16px;
+  background: #ffffff;
+  border-bottom: 1px solid #d7dce3;
+}
+
+.app-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.app-header-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.language-switch {
+  display: flex;
+  gap: 4px;
+}
+
+.language-button {
+  padding: 4px 10px;
+  font: inherit;
+  color: inherit;
+  background: #f5f7fa;
+  border: 1px solid #c3cad4;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.language-button[aria-pressed='true'] {
+  color: #ffffff;
+  background: #1f6feb;
+  border-color: #1f6feb;
+}
+
+.units-control {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #46515f;
+}
+
+.units-control select {
+  font: inherit;
+}
+
+.app-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.app-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 230px;
+  padding: 12px;
+  overflow-y: auto;
+  background: #fbfcfd;
+  border-inline-end: 1px solid #d7dce3;
+}
+
+.sidebar-title {
+  margin: 0 0 4px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #667485;
+  text-transform: uppercase;
+}
+
+.sidebar-tools {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sidebar-tool {
+  padding: 8px 10px;
+  font: inherit;
+  color: inherit;
+  text-align: start;
+  background: #ffffff;
+  border: 1px solid #d7dce3;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.sidebar-tool:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+/* حاوية عارض Cesium — تملأ ما تبقى من الشاشة (T1.6) */
+.map-view {
+  position: relative;
+  flex: 1;
+  min-width: 0;
 }

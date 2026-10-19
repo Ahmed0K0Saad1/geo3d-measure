@@ -4,11 +4,11 @@
 
 | البند | القيمة |
 |---|---|
-| آخر تحديث | 2026-10-19 — الجلسة 5 |
-| المرحلة الحالية | **P1 — التهيئة التقنية (Scaffold)** |
-| حالة المرحلة | ⏳ جارية — مكتمل: T1.1–T1.5 (ملتزمة) · T1.6 قيد التنفيذ |
-| المهمة الجارية الآن | **T1.6 — الهيكل العام للواجهة + i18n أولي (معتمدة — قيد التنفيذ)** |
-| المهمة التالية | **T2.1 — نموذج النقطة + مخزن Zustand** (بعد تفصيل P2 كاملة واعتمادها) |
+| آخر تحديث | 2026-10-19 — الجلسة 6 |
+| المرحلة الحالية | **P1 مغلقة ☑ — التالية: P2 (إدخال النقاط) بانتظار التفصيل والاعتماد** |
+| حالة المرحلة | ☑ مكتملة — T1.1–T1.6 ملتزمة (سجل الجلسة 6) |
+| المهمة الجارية الآن | **لا مهمة جارية — بانتظار فحصك البصري النهائي ثم تفصيل P2 واعتمادها** |
+| المهمة التالية | **تفصيل P2 كاملة (T2.1–T2.7) وعرضها للاعتماد قبل البدء** |
 | إعاقات تقنية | لا يوجد |
 
 ## بنود معلّقة على المالك (Action Items)
@@ -29,6 +29,15 @@
 | OQ-2 | الاسم النهائي للمشروع (الحالي مؤقت: Geo3D Measure) | مفتوح |
 
 ## سجل الجلسات (الأحدث أولًا)
+### الجلسة 6 — 2026-10-19 — T1.6: الهيكل العام + ثنائية اللغة (وإغلاق P1)
+- حزم جديدة: `i18next@26.5.2` + `react-i18next@17.1.0` (تطبيق ADR-004 المعتمد).
+- ملفات جديدة: `src/i18n/i18n.ts` (تهيئة + قواميس ar/en + حفظ الاختيار في localStorage + مزامنة lang/dir) · `src/components/Header.tsx` (العنوان + مبدّل AR/EN فوري + محدد وحدات placeholder) · `src/components/Sidebar.tsx` (منطقة أدوات — أزرار مستقبلية معطلة) · `src/features/map/MapView.tsx` (فصل حاوية الخريطة عن App) · `tests/i18n.test.ts` (تطابق مفاتيح ar/en + قيم غير فارغة).
+- تعديلات: `App.tsx` (تجميع Header/Sidebar/MapView) · `index.css` (تخطيط app-shell بخصائص CSS منطقية تنقلب تلقائياً مع RTL) · `main.tsx` (تهيئة i18n) · `index.html` (`lang="ar" dir="rtl"`) · إعداد TS (`resolveJsonModule` + `esModuleInterop` للمشروعين) · اختبار JSON باستيراد `with { type: 'json' }` (متطلب NodeNext).
+- تحقق: lint نظيف · format:check نظيف · test **4/4** · build ناجح (1666 وحدة — +32 بسبب i18next؛ 342 أصلاً — تحذير R-1 متوقع) · dev-server: الصفحة (RTL) ووحدات main/i18n/Header كلها HTTP 200.
+- **إغلاق P1 ☑:** DoD محقق — كرة أرضية بتضاريس + واجهة AR/EN (تبديل فوري + RTL/LTR) + جودة كود مفعّلة + اختبارات خضراء.
+- الالتزام (بموافقة المالك): `feat(ui): initial shell layout with AR/EN i18n (T1.6)`.
+- **الفحص البصري النهائي (T1.5+T1.6) مطلوب من المالك:** كرة + صور Esri + تضاريس + تبديل لغة فوري + انقلاب التخطيط.
+
 ### الجلسة 5 — 2026-10-19 — T1.5: أول كرة أرضية حقيقية
 - استلام توكن Cesium ion من المالك (A-1 ✅) وحفظه في `.env` محلياً — مؤكد أن Git يتجاهله (`git check-ignore`: `.gitignore:10`)، وصلاحية التوكن حيّة (`Ion API HTTP: 200`) دون طباعة القيمة.
 - `useCesiumViewer` (وفق ARCHITECTURE §5): `Ion.defaultAccessToken` + `Viewer` مع `Terrain.fromWorldTerrain()` + إدارة دورة حياة آمنة مع StrictMode + استيراد `widgets.css`؛ `App` أصبح full-screen؛ `src/types/env.d.ts` يعرّف المتغير بلا any؛ حُذف سطر T1.2 المؤقت (بديله الدائم `tests/cesium.smoke.test.ts`).
@@ -37,7 +46,7 @@
 - **الإصلاح — ADR-020:** `baseLayerPicker: false` + صور أساسية من **Esri World Imagery** (خدمة REST بلا مفتاح — metadata وبلاطة فعلية وCORS: متحققة) + التضاريس تبقى من ion؛ الملف المتأثر: `useCesiumViewer.ts` (+ تحديث §5 في ARCHITECTURE وسطر T1.5 في ROADMAP).
 - إعادة تحقق آلي بعد الإصلاح: lint نظيف · format:check نظيف · test 3/3 · build ناجح (342 أصلاً) · dev-server: `/` وhook و`widgets.css` بـHTTP 200.
 - **الفحص البصري النهائي (صور + تضاريس + دوران/تقريب) مطلوب من المالك** لتوثيق السيناريو اليدوي.
-- **الالتزام أُنشئ بموافقة المالك:** `feat(map): render real Cesium globe with Esri imagery and ion terrain (T1.5)` — والفحص البصري النهائي يُستكمل مع فحص T1.6.
+- **الالتزام أُنشئ بموافقة المالك:** `feat(map): render real Cesium globe with Esri imagery and ion terrain (T1.5)` — مع معالجة أخطاء طبقة الصور (`errorEvent` → سجل واضح) ضمن الالتزام؛ والفحص البصري النهائي يُستكمل مع فحص T1.6.
 
 ### الجلسة 4 — 2026-10-19 — T1.4: هيكل المجلدات النهائي
 - إنشاء الشجرة المعتمدة (`ARCHITECTURE` §3) داخل `src/`: 15 مجلداً جديداً مثبَّتة بـ`.gitkeep` — components · features/{map,points,measure,polygon,export,settings} · core/{geo,coords,units} · services · store · i18n · types · lib.

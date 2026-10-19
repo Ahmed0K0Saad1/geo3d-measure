@@ -1,10 +1,15 @@
-import { useRef } from 'react'
-import { useCesiumViewer } from '@/features/map/useCesiumViewer'
+import { Header } from '@/components/Header'
+import { Sidebar } from '@/components/Sidebar'
+import { MapView } from '@/features/map/MapView'
 
 export default function App() {
-  const containerRef = useRef<HTMLDivElement>(null)
-
-  useCesiumViewer(containerRef)
-
-  return <div ref={containerRef} className="cesium-container" />
+  return (
+    <div className="app-shell">
+      <Header />
+      <div className="app-body">
+        <Sidebar />
+        <MapView />
+      </div>
+    </div>
+  )
 }

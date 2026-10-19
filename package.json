@@ -14,8 +14,10 @@
   },
   "dependencies": {
     "cesium": "^1.146.0",
+    "i18next": "^26.5.2",
     "react": "^19.2.8",
-    "react-dom": "^19.2.8"
+    "react-dom": "^19.2.8",
+    "react-i18next": "^17.1.0"
   },
   "devDependencies": {
     "@types/node": "^24.13.3",
