@@ -40,7 +40,7 @@
 | zod | تحقق مدخلات الإحداثيات | Joi / Yup | مقترح |
 | i18next + react-i18next | التعريب | حل مخصص | معتمد مبدأً (ADR-004) |
 | vitest | الاختبارات | Jest | مقترح (ADR-016) |
-| eslint + prettier | جودة الكود | — | مقترح |
+| oxlint + prettier | جودة الكود | eslint + typescript-eslint | معتمد (ADR-019) |
 | geographiclib-geodesic (أو مكافئ) | مساحة جيوديسية دقيقة | تنفيذ ذاتي | مقترح (ADR-017) |
 
 ## 3) شجرة الملفات المخططة
