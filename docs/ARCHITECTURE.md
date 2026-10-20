@@ -35,41 +35,47 @@
 | cesium | الكرة الأرضية 3D | MapLibre / Mapbox / Google | معتمد (ADR-001) |
 | react + typescript + vite | الواجهة والبناء | Next.js | معتمد (ADR-002) |
 | zustand | إدارة الحالة | Context API | معتمد (ADR-012 ✅) |
-| dexie | IndexedDB | idb / LocalStorage | مقترح (ADR-013) |
+| dexie | IndexedDB | idb / LocalStorage | معتمد (ADR-013/035) |
 | proj4 + mgrs | تحويلات UTM/MGRS | حسابات يدوية | معتمد (ADR-015 ✅ · T2.4) |
 | zod | تحقق مدخلات الإحداثيات | Joi / Yup | معتمد (T2.4 · ADR-027) |
-| i18next + react-i18next | التعريب | حل مخصص | معتمد مبدأً (ADR-004) |
-| vitest | الاختبارات | Jest | مقترح (ADR-016) |
+| i18next + react-i18next | التعريب | حل مخصص | معتمد (ADR-004) |
+| vitest | الاختبارات | Jest | معتمد (ADR-016/019) |
 | oxlint + prettier | جودة الكود | eslint + typescript-eslint | معتمد (ADR-019) |
-| geographiclib-geodesic (أو مكافئ) | مساحة جيوديسية دقيقة | تنفيذ ذاتي | مقترح (ADR-017) |
+| geographiclib-geodesic | مساحة جيوديسية دقيقة | تنفيذ ذاتي | معتمد (ADR-017/034) |
+| axe-core + jsdom + Testing Library | اختبار الإتاحة | فحص يدوي فقط | معتمد (ADR-036) |
+| vite-plugin-static-copy | نسخ أصول Cesium | استيراد مباشر | معتمد (ADR-011) |
 
-## 3) شجرة الملفات المخططة
+## 3) شجرة الملفات الفعلية (v1.0)
 ```
 geo3d-measure/
-├─ docs/                     # التوثيق الرسمي (مصدر الحقيقة)
-│  ├─ STATE.md · ROADMAP.md · REQUIREMENTS.md · ARCHITECTURE.md · DECISIONS.md
-├─ public/                   # أصول ثابتة (favicon، صور)
+├─ docs/                     # STATE · ROADMAP · REQUIREMENTS · ARCHITECTURE
+│                            # DECISIONS · USER_GUIDE · DEPLOYMENT · PRE_LAUNCH_CHECKLIST
+├─ public/                   # أصول ثابتة
 ├─ src/
-│  ├─ app/                   # تركيب التطبيق: App، Providers، التخطيط العام
-│  ├─ components/            # مكونات UI عامة (Button، Input، Panel، Modal)
+│  ├─ app/App.tsx            # تركيب التطبيق + lazy(MapView)
+│  ├─ components/            # Header · Sidebar · LayerSelector
 │  ├─ features/
-│  │  ├─ map/                # CesiumViewer + الخطافات + الطبقات
-│  │  ├─ points/             # إدخال وإدارة النقاط
-│  │  ├─ measure/            # عرض نتائج القياس
-│  │  ├─ polygon/            # رسم المضلع وعرض المساحة
-│  │  ├─ export/             # واجهات التصدير
-│  │  └─ settings/           # الإعدادات
-│  ├─ core/                  # منطق خالص بلا React ولا Cesium
-│  │  ├─ geo/                # المسافات/الاتجاه/المساحة + الاستراتيجيات
-│  │  ├─ coords/             # parsers DD/DMS/UTM/MGRS + التحويلات
-│  │  └─ units/              # التحويل والعرض
-│  ├─ services/              # geocoding · storage (Repository) · تصدير ملفات
-│  ├─ store/                 # Zustand
-│  ├─ i18n/                  # الإعداد + ar.json / en.json
-│  ├─ types/                 # أنواع TS مشتركة
-│  └─ lib/                   # مساعدات (debounce، تنسيق أرقام)
-├─ tests/                    # Vitest + fixtures مرجعية
-├─ .env.example · .gitignore · AGENTS.md · README.md
+│  │  ├─ map/                # useCesiumViewer · MapView · MapLoading · layerState/layerSources
+│  │  │                      # usePointEntities/Hover · usePathEntities · usePolygonDraw/Entities
+│  │  │                      # useFlyTo · useMapClick · pinImage · pathGeometry
+│  │  ├─ points/             # PointsTools · ManualPointInput · GeocodingSearch
+│  │  │                      # PointsPanel · ResultsPanel · useGeolocation · useGeocoding
+│  │  ├─ polygon/            # PolygonTools · AreaComparison · areaFormat
+│  │  ├─ sessions/           # SessionManager · useSessionPersistence
+│  │  ├─ export/             # ExportPanel
+│  │  └─ settings/           # SettingsPanel
+│  ├─ core/                  # منطق نقي بلا React/Cesium
+│  │  ├─ geo/                # GeoPoint · haversine · path · strategy/registry · areaGeodesic/areaUtm
+│  │  ├─ coords/             # parsers · utm · mgrs · formatPoint
+│  │  └─ units/              # unitTypes · converters · areaConverters
+│  ├─ services/              # geocoding · session/settings repositories+services · exportFormat/Service
+│  ├─ store/                 # Zustand: usePointsStore · usePolygonStore · useSessionStore
+│  │                         # useSettingsStore · sessionSnapshot
+│  ├─ i18n/                  # i18n.ts · ar.json · en.json
+│  ├─ lib/                   # dexie · validators · ids · collections
+│  └─ types/env.d.ts
+├─ tests/                    # Vitest + fixtures + accessibility.test.tsx + e2e/manual-scenarios.md
+├─ .env.example · .gitignore · AGENTS.md · README.md · vercel.json (T7.5)
 ```
 
 ## 4) محرك القياس (قلب المشروع)
@@ -113,6 +119,8 @@ interface SegmentResult {
 - التضاريس من Cesium ion عبر `VITE_CESIUM_ION_TOKEN`؛ خريطة أساس واحدة من ثلاث Esri (World Imagery / Street Map / Topo Map — بلا مفتاح، ADR-020/022)؛ تسميات شفافة اختيارية من Esri World_Boundaries_and_Places فوقها (ADR-021).
 - مبدّل الطبقات المخصص `LayerSelector` (الشريط العلوي): اختيار خريطة الأساس (radio) + إظهار/إخفاء التسميات والتضاريس (checkbox)؛ الحالة في React ويطبّقها `useCesiumViewer` (تبديل متزامن + كاش تضاريس + `errorEvent` لكل طبقة). مصادر الطبقات مركزية في `features/map/layerSources.ts` (ADR-022).
 - رسم المسار: Polyline (يتبع سطح الأرض بسلوك Cesium الافتراضي للخطوط الجيوديسية).
+- **الأداء (T7.2 — ADR-037):** `MapView` يُحمَّل بـ`lazy()` + `Suspense` مع `MapLoading`؛ التقسيم عبر `build.rolldownOptions.output.codeSplitting.groups` (cesium/react/i18n/vendor)؛ `LayerState` في `layerState.ts` بلا Cesium حتى لا يعود إلى حزمة الدخول. Cesium غير موجود في `index.html` أو `modulepreload`.
+- **الموبايل والإتاحة (T7.3):** breakpoint 768px يقلب التخطيط إلى عمود (الخريطة 50dvh أولًا) مع `100dvh` وfallback، وأهداف لمس ≥40px؛ `:focus-visible` و`.visually-hidden` موحّدان؛ الخريطة `role="region"` + `aria-label` مترجم + `aria-describedby` لتلميح لوحة المفاتيح (الإدخال اليدوي).
 
 ## 6) Geocoding
 - الواجهة: `GeocodingProvider { search(query, { signal }): Promise<GeocodingResult[]> }` في `services/geocoding.ts`.
@@ -136,7 +144,17 @@ interface SegmentResult {
 1. **وحدة (Vitest):** `core/` و`coords/` و`units/` بدون متصفح.
 2. **مرجعية:** fixtures تُولَّد بـGeographicLib (مسافات/مساحات لمَواقع معيارية) وتُحفظ JSON في `tests/fixtures`.
 3. **حدود نظرية:** اختبار أن فرق Haversine عن المرجع الإهليلجي داخل الحد الأقصى المتوقع.
-4. **يدوي موثق:** سيناريوهات لكل مرحلة تُكتب في STATE.
+4. **يدوي موثق:** سيناريوهات لكل مرحلة تُكتب في STATE و`tests/e2e/manual-scenarios.md`.
+5. **إتاحة (Vitest + jsdom):** `axe-core` على Header + Sidebar في AR/RTL وEN/LTR بوسوم WCAG A/AA؛ `color-contrast` وCesium يُفحصان يدويًا لغياب التخطيط/WebGL في jsdom (ADR-036).
+6. **تغطية:** `npm run test:coverage` (v8) بلا عتبات إجبارية؛ القياس مرجعي لتحديد الفجوات.
 
 ## 10) المخاطر التقنية
 مرجع R-1..R-5 في `ROADMAP.md`؛ التفاصيل الإضافية تُضاف هنا عند معالجتها.
+
+## 11) البناء والنشر
+- **البناء:** `tsc -b && vite build`؛ الناتج `dist/` مع `dist/cesiumStatic/` (Assets/Workers/Widgets) المنسوخة بواسطة `vite-plugin-static-copy`.
+- **التقسيم:** مجموعات Rolldown (cesium/react/i18n/vendor) + `MapView` كسول؛ الهدف إبقاء الدخول < 300KB gzip.
+- **البيئة:** `VITE_CESIUM_ION_TOKEN` يُضمَّن وقت البناء (عام بطبيعته)؛ لا أسرار في `VITE_*`.
+- **الاستضافة:** Vercel (معتمد) أو Nginx. التطبيق بلا Router، فلا يحتاج rewrite عامًا.
+- **الرؤوس:** `Permissions-Policy: geolocation=(self)`، `X-Content-Type-Options`، `X-Frame-Options`، `Referrer-Policy`، وكاش طويل لأصول `/assets` المبصومة وقصير لـ`/cesiumStatic`.
+- التفاصيل التنفيذية والتحقق والتراجع في `DEPLOYMENT.md`، وقائمة القبول في `PRE_LAUNCH_CHECKLIST.md`.
