@@ -107,7 +107,9 @@ interface SegmentResult {
 - النقاط (T4.1): `usePointEntities` يرسم `Billboard` من SVG Data URI (`pinImage.ts`) بلون ورقم؛ النقاط بلا ارتفاع تُثبَّت على التضاريس، والتلميح عبر `usePointHover` + `PointTooltip` (HTML overlay) لا عبر `Entity.description`.
 - المسار (T4.2): `usePathEntities` يرسم `Polyline` جيوديسية مثبَّتة على الأرض لكل مقطع؛ المقطع المحدد (`selectedSegmentIndex`) أحمر والبقية زرقاء.
 - المضلع (T5.1): الحالة في `usePolygonStore` (`idle/drawing/closed` + رؤوس). `usePolygonDraw` يدير `LEFT_CLICK`/`MOUSE_MOVE` وEscape ويغلق بالنقر على الرأس الأول ضمن 16px أو بالزر؛ `usePolygonEntities` يرسم الرؤوس والخط المغلق والتعبئة وخط المعاينة المتقطع. وضع النقر ووضع المضلع متعارضان في `App`.
-- النتائج (T4.3): `ResultsPanel` يحسب `computePath` في الواجهة ويعرض المقاطع والاتجاهين والإجمالي واسم المنهجية، مع تبديل الوحدات (م/كم/nm).
+- النتائج (T4.3): `ResultsPanel` يحسب `computePath` في الواجهة ويعرض المقاطع والاتجاهين والإجمالي واسم المنهجية، مع وحدات m/km/mi/ft/nm من `useSettingsStore` (T6.4).
+- الجلسات (T6.2): `useSessionPersistence` يحمّل الإعدادات وآخر جلسة عند الإقلاع، ويحفظ الجلسة تلقائيًا بعد أول حفظ صريح (debounce 800ms). `useFlyTo` يتلقى `fitAllToken` ويؤطّر البيانات المستعادة بـ`frameAll` (bbox مع خط التاريخ)، ويتجاهل الإضافة الجماعية لتفادي طيرانين.
+- الإعدادات والتصدير (T6.3/T6.4): `useSettingsStore` مصدر مركزي للوحدات وصيغة الإحداثيات؛ `formatPoint` ينسّق DD/DMS/UTM/MGRS مع fallback إلى DMS. التصدير عبر مُسلسلات نقية (`exportFormat.ts`) وتنزيل المتصفح في `exportService.ts`.
 - التضاريس من Cesium ion عبر `VITE_CESIUM_ION_TOKEN`؛ خريطة أساس واحدة من ثلاث Esri (World Imagery / Street Map / Topo Map — بلا مفتاح، ADR-020/022)؛ تسميات شفافة اختيارية من Esri World_Boundaries_and_Places فوقها (ADR-021).
 - مبدّل الطبقات المخصص `LayerSelector` (الشريط العلوي): اختيار خريطة الأساس (radio) + إظهار/إخفاء التسميات والتضاريس (checkbox)؛ الحالة في React ويطبّقها `useCesiumViewer` (تبديل متزامن + كاش تضاريس + `errorEvent` لكل طبقة). مصادر الطبقات مركزية في `features/map/layerSources.ts` (ADR-022).
 - رسم المسار: Polyline (يتبع سطح الأرض بسلوك Cesium الافتراضي للخطوط الجيوديسية).
@@ -118,14 +120,17 @@ interface SegmentResult {
 - بديل جاهز للتبديل: Photon (بدون تغييرات في الواجهة الأمامية).
 
 ## 7) التخزين المحلي
-- Dexie، مخطط v1:
-  - `sessions`: `{ id, name, createdAt, updatedAt, points[], polygon?, view? }`
-  - `settings`: key-value (اللغة، الوحدات، آخر جلسة مفتوحة).
-- Repository: `listSessions/saveSession/loadSession/deleteSession` — يمكن استبداله لاحقًا بـHTTP دون تغيير الواجهة (ADR-005).
+- Dexie، قاعدة `geo3d-measure`، مخطط v1 (ADR-035):
+  - `sessions`: `{ id, name, createdAt, updatedAt, version: 1, points[], polygon: { vertices[], closed }, settings: { distanceUnit, areaUnit, coordinateFormat } }` — المفهرس `id, updatedAt`.
+  - `settings`: `{ key: 'app', distanceUnit, areaUnit, coordinateFormat, lastSessionId, updatedAt }` — المفتاح `key`.
+- اللغة تبقى في `localStorage` (`geo3d.lang`) للتهيئة الفورية، ولا تُخزَّن في لقطة الجلسة؛ الكاميرا والتحديدات خارج اللقطة أيضًا.
+- Repository: `listSessions/getSession/saveSession/deleteSession` + `loadAppSettings/saveAppSettings/getLastSessionId/setLastSessionId` مع تحقق zod وأخطاء مرمزة — يمكن استبداله لاحقًا بـHTTP دون تغيير الواجهة (ADR-005).
+- الجلسة تُحفظ كلقطة (`points` + `polygon` + `settings`)؛ الاستعادة تملأ المتاجر ثم تطلب تأطيرًا واحدًا لكل البيانات.
 
 ## 8) i18n و RTL
 - i18next + react-i18next، ملفات `ar.json`/`en.json`، تبديل `dir` تلقائيًا.
 - تنسيق الأرقام يتبع اللغة؛ نسخ الإحداثيات يكون دائمًا بالصيغة الدولية الموحدة.
+- صيغة الإحداثيات المعروضة (DD/DMS/UTM/MGRS) ووحدات المسافة/المساحة إعدادات مركزية محفوظة في Dexie؛ التغيير ينعكس فورًا على لوحة النتائج ومقارنة المساحة وقائمة النقاط والتلميح.
 
 ## 9) استراتيجية الاختبارات
 1. **وحدة (Vitest):** `core/` و`coords/` و`units/` بدون متصفح.

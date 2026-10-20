@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { GeoPoint } from '@/core/geo/GeoPoint.ts'
+import { formatPoint } from '@/core/coords/formatPoint.ts'
 import { moveItem } from '@/lib/collections'
 import { usePointsStore } from '@/store/usePointsStore'
+import { useSettingsStore } from '@/store/useSettingsStore'
 
 interface PointsPanelProps {
   onFocusPoint: (point: GeoPoint) => void
@@ -20,6 +22,7 @@ export function PointsPanel({ onFocusPoint }: PointsPanelProps) {
   const updatePoint = usePointsStore((state) => state.updatePoint)
   const reorderPoints = usePointsStore((state) => state.reorderPoints)
   const selectPoint = usePointsStore((state) => state.selectPoint)
+  const coordinateFormat = useSettingsStore((state) => state.coordinateFormat)
 
   const [editingId, setEditingId] = useState<string | null>(null)
   const [draftLabel, setDraftLabel] = useState('')
@@ -134,7 +137,7 @@ export function PointsPanel({ onFocusPoint }: PointsPanelProps) {
                     <>
                       <span className="points-item__label">{displayLabel}</span>
                       <span className="points-item__coords" dir="ltr">
-                        {point.lat.toFixed(5)}, {point.lon.toFixed(5)}
+                        {formatPoint(point, coordinateFormat)}
                       </span>
                       <div className="points-item__actions">
                         <button

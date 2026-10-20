@@ -225,6 +225,7 @@
   6. الإعدادات مركزية في `useSettingsStore`: مسافة m/km/mi/ft/nm، مساحة m²/ha/km²/ft²/acre/mi²، صيغة DD/DMS/UTM/MGRS (افتراضي km/ha/DD). تغيير الوحدة في اللوحة يحدّث الإعداد العام.
 - **البدائل المرفوضة:** LocalStorage للسجلات (سعة/بنية) · لغة الجلسة داخل Dexie (وميض وتبديل غير متوقع) · auto-create لكل تغيير (فوضى جلسات) · استعادة الكاميرا في P6 (خارج FR-11 وتعقيد bbox/orientation) · مكتبة تصدير خارجية (الصيغ مباشرة).
 - **الأثر:** `src/lib/dexie.ts` · `src/services/{sessionRepository,settingsRepository,exportFormat,exportService}.ts` · `src/store/{useSessionStore,useSettingsStore}.ts` · `src/features/sessions/*` · `src/features/settings/SettingsPanel.tsx` · `src/features/export/ExportPanel.tsx` · `src/core/coords/formatPoint.ts` · `src/core/units/areaConverters.ts` · `App/Sidebar/MapView` · `usePointsStore`/`useFlyTo` · `tsconfig.node.json` · `package.json` · i18n · اختبارات.
+- **التحقق (الجلسة 19):** المخطط الفعلي `sessions: 'id, updatedAt'` و`settings: 'key'`؛ سجل الجلسة `{ id, name, createdAt, updatedAt, version: 1, points, polygon: { vertices, closed }, settings }`؛ سجل الإعدادات `{ key: 'app', distanceUnit, areaUnit, coordinateFormat, lastSessionId, updatedAt }`. auto-save 800ms بعد أول حفظ صريح، واستعادة آخر جلسة مع `frameAll`. التصدير: GeoJSON `[lon,lat]` وحلقة مغلقة، KML مع `clampToGround` لغياب الارتفاع و`absolute` عند وجوده، CSV RFC 4180 + BOM عند التنزيل. 190/190 اختبارًا وبناء ناجح.
 
 ---
 

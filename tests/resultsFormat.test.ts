@@ -6,15 +6,19 @@ import {
 } from '../src/features/points/resultsFormat.ts'
 
 describe('resultsFormat — عرض المسافات والاتجاهات (T4.3)', () => {
-  it('يحوّل الأمتار إلى الوحدات الثلاث', () => {
+  it('يحوّل الأمتار إلى الوحدات الخمس', () => {
     expect(convertDistance(1000, 'm')).toBe(1000)
     expect(convertDistance(1000, 'km')).toBe(1)
     expect(convertDistance(1852, 'nm')).toBe(1)
+    expect(convertDistance(1609.344, 'mi')).toBeCloseTo(1, 12)
+    expect(convertDistance(0.3048, 'ft')).toBeCloseTo(1, 12)
   })
 
   it('ينسّق المسافة بمنازل الوحدة', () => {
     expect(formatDistance(1000, 'km')).toBe('1.000')
     expect(formatDistance(1852, 'nm')).toBe('1.000')
+    expect(formatDistance(1609.344, 'mi')).toBe('1.000')
+    expect(formatDistance(3.048, 'ft')).toBe('10')
     expect(formatDistance(123.456, 'm')).toBe('123.5')
     expect(formatDistance(0, 'km')).toBe('0.000')
   })

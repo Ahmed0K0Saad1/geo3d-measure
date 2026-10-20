@@ -3,18 +3,7 @@
     "title": "Geo3D Measure"
   },
   "header": {
-    "language": "اللغة",
-    "units": "الوحدات",
-    "unitsMetric": "متري (م · كم)",
-    "comingSoon": "قريباً"
-  },
-  "sidebar": {
-    "tools": "الأدوات",
-    "points": "إدارة النقاط",
-    "measure": "قياس المسافة",
-    "polygon": "المضلع والمساحة",
-    "export": "التصدير",
-    "settings": "الإعدادات"
+    "language": "اللغة"
   },
   "layers": {
     "title": "الطبقات",
@@ -89,6 +78,8 @@
     "units": {
       "m": "م",
       "km": "كم",
+      "mi": "ميل",
+      "ft": "قدم",
       "nm": "ميل بحري"
     },
     "caption": "مقاطع المسار ومسافاتها",
@@ -103,6 +94,59 @@
     "selectSegment": "تمييز المقطع {{number}} على الخريطة",
     "total": "الإجمالي",
     "method": "المنهجية: {{method}}"
+  },
+  "sessions": {
+    "title": "الجلسات",
+    "nameLabel": "اسم الجلسة",
+    "namePlaceholder": "مثال: مسار الرياض",
+    "untitled": "جلسة بلا اسم",
+    "save": "حفظ الجلسة",
+    "new": "جلسة جديدة",
+    "open": "فتح",
+    "delete": "حذف",
+    "deleteConfirm": "تأكيد الحذف",
+    "current": "الحالية",
+    "saved": "محفوظة",
+    "saving": "جارٍ الحفظ…",
+    "dirty": "تغييرات غير محفوظة",
+    "unsaved": "غير محفوظة",
+    "loading": "جارٍ تحميل الجلسات…",
+    "empty": "لا توجد جلسات محفوظة بعد.",
+    "saveError": "تعذّر حفظ الجلسة. تحقق من التخزين المحلي ثم أعد المحاولة.",
+    "loadError": "تعذّر تحميل الجلسات من التخزين المحلي.",
+    "deleteError": "تعذّر حذف الجلسة. أعد المحاولة.",
+    "notFound": "الجلسة المطلوبة غير موجودة.",
+    "pointCount": "النقاط: {{count}}"
+  },
+  "export": {
+    "title": "التصدير",
+    "defaultName": "geo3d-measure",
+    "summary": "النقاط: {{points}} · رؤوس المضلع: {{vertices}}",
+    "formatsLabel": "صيغة التصدير",
+    "formats": {
+      "geojson": "GeoJSON",
+      "kml": "KML",
+      "csv": "CSV"
+    },
+    "empty": "أضف نقطة أو مضلعًا صالحًا لتفعيل التصدير."
+  },
+  "settings": {
+    "title": "الإعدادات",
+    "distanceUnit": "وحدة المسافة",
+    "areaUnit": "وحدة المساحة",
+    "coordinateFormat": "صيغة الإحداثيات",
+    "language": "اللغة",
+    "hint": "تُحفظ الإعدادات محليًا وتُطبّق فورًا على العرض.",
+    "formats": {
+      "DD": "درجات عشرية (DD)",
+      "DMS": "درجات/دقائق/ثوانٍ (DMS)",
+      "UTM": "UTM",
+      "MGRS": "MGRS"
+    },
+    "languages": {
+      "ar": "العربية",
+      "en": "English"
+    }
   },
   "points": {
     "title": "النقاط",

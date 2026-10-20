@@ -3,18 +3,7 @@
     "title": "Geo3D Measure"
   },
   "header": {
-    "language": "Language",
-    "units": "Units",
-    "unitsMetric": "Metric (m · km)",
-    "comingSoon": "Coming soon"
-  },
-  "sidebar": {
-    "tools": "Tools",
-    "points": "Points",
-    "measure": "Measure distance",
-    "polygon": "Polygon & area",
-    "export": "Export",
-    "settings": "Settings"
+    "language": "Language"
   },
   "layers": {
     "title": "Layers",
@@ -89,6 +78,8 @@
     "units": {
       "m": "m",
       "km": "km",
+      "mi": "mi",
+      "ft": "ft",
       "nm": "nmi"
     },
     "caption": "Path segments and distances",
@@ -103,6 +94,59 @@
     "selectSegment": "Highlight segment {{number}} on the globe",
     "total": "Total",
     "method": "Method: {{method}}"
+  },
+  "sessions": {
+    "title": "Sessions",
+    "nameLabel": "Session name",
+    "namePlaceholder": "e.g. Riyadh route",
+    "untitled": "Untitled session",
+    "save": "Save session",
+    "new": "New session",
+    "open": "Open",
+    "delete": "Delete",
+    "deleteConfirm": "Confirm delete",
+    "current": "Current",
+    "saved": "Saved",
+    "saving": "Saving…",
+    "dirty": "Unsaved changes",
+    "unsaved": "Not saved",
+    "loading": "Loading sessions…",
+    "empty": "No saved sessions yet.",
+    "saveError": "Could not save the session. Check local storage and try again.",
+    "loadError": "Could not load sessions from local storage.",
+    "deleteError": "Could not delete the session. Try again.",
+    "notFound": "The requested session was not found.",
+    "pointCount": "Points: {{count}}"
+  },
+  "export": {
+    "title": "Export",
+    "defaultName": "geo3d-measure",
+    "summary": "Points: {{points}} · Polygon vertices: {{vertices}}",
+    "formatsLabel": "Export format",
+    "formats": {
+      "geojson": "GeoJSON",
+      "kml": "KML",
+      "csv": "CSV"
+    },
+    "empty": "Add a point or a valid polygon to enable export."
+  },
+  "settings": {
+    "title": "Settings",
+    "distanceUnit": "Distance unit",
+    "areaUnit": "Area unit",
+    "coordinateFormat": "Coordinate format",
+    "language": "Language",
+    "hint": "Settings are stored locally and applied immediately.",
+    "formats": {
+      "DD": "Decimal degrees (DD)",
+      "DMS": "Degrees/minutes/seconds (DMS)",
+      "UTM": "UTM",
+      "MGRS": "MGRS"
+    },
+    "languages": {
+      "ar": "العربية",
+      "en": "English"
+    }
   },
   "points": {
     "title": "Points",

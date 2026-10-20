@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { areaGeodesic } from '@/core/geo/areaGeodesic.ts'
 import { areaUtm } from '@/core/geo/areaUtm.ts'
@@ -8,6 +8,7 @@ import {
   type AreaUnit,
 } from '@/core/units/unitTypes.ts'
 import { usePolygonStore } from '@/store/usePolygonStore'
+import { useSettingsStore } from '@/store/useSettingsStore'
 import { areaDifference, formatArea, formatPercent } from './areaFormat'
 
 /**
@@ -18,7 +19,8 @@ export function AreaComparison() {
   const { t } = useTranslation()
   const vertices = usePolygonStore((state) => state.vertices)
   const status = usePolygonStore((state) => state.status)
-  const [unit, setUnit] = useState<AreaUnit>('ha')
+  const unit = useSettingsStore((state) => state.areaUnit)
+  const setUnit = useSettingsStore((state) => state.setAreaUnit)
 
   const geodesic = useMemo(() => areaGeodesic(vertices), [vertices])
   const utm = useMemo(() => areaUtm(vertices), [vertices])

@@ -8,6 +8,8 @@ interface PointsState {
   /** فهرس المقطع المحدد (0-based) — T4.2/ADR-033. */
   selectedSegmentIndex: number | null
   addPoint: (point: GeoPoint) => void
+  /** يستبدل القائمة كاملة عند فتح جلسة محفوظة (T6.2). */
+  replacePoints: (points: GeoPoint[]) => void
   removePoint: (id: string) => void
   updatePoint: (id: string, updates: Partial<GeoPoint>) => void
   reorderPoints: (ids: string[]) => void
@@ -29,6 +31,12 @@ export const usePointsStore = create<PointsState>()((set) => ({
   selectedPointId: null,
   selectedSegmentIndex: null,
   addPoint: (point) => set((state) => ({ points: [...state.points, point] })),
+  replacePoints: (points) =>
+    set({
+      points,
+      selectedPointId: null,
+      selectedSegmentIndex: null,
+    }),
   removePoint: (id) =>
     set((state) => {
       const points = state.points.filter((p) => p.id !== id)

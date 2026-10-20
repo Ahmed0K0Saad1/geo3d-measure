@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { createId } from '@/lib/ids.ts'
 
 /** رأس مضلع مرسوم على الكرة (WGS84). */
 export interface PolygonVertex {
@@ -25,16 +26,6 @@ interface PolygonState {
   replacePolygon: (vertices: PolygonVertex[], closed: boolean) => void
 }
 
-function createVertexId(): string {
-  if (
-    typeof crypto !== 'undefined' &&
-    typeof crypto.randomUUID === 'function'
-  ) {
-    return `polygon-${crypto.randomUUID()}`
-  }
-  return `polygon-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
-}
-
 /**
  * مخزن المضلع الواحد في P5 (ADR-034):
  * الرؤوس مشتركة بين الرسم والمساحة والتصدير والجلسات.
@@ -48,7 +39,7 @@ export const usePolygonStore = create<PolygonState>()((set) => ({
     set((state) => ({
       vertices: [
         ...state.vertices,
-        { ...vertex, id: vertex.id ?? createVertexId() },
+        { ...vertex, id: vertex.id ?? createId('polygon') },
       ],
       status: 'drawing',
     })),

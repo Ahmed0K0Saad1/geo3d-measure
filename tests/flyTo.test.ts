@@ -3,6 +3,7 @@ import type { GeoPoint } from '../src/core/geo/GeoPoint.ts'
 import {
   findAddedPoint,
   focusAltitude,
+  frameAll,
   framePoints,
 } from '../src/features/map/useFlyTo.ts'
 
@@ -108,5 +109,54 @@ describe('framePoints — تأطير مقطع في الكاميرا (T4.4)', () 
     const b = buildPoint({ id: 'b', height: 2000, lat: 24.7137, lon: 46.6754 })
 
     expect(framePoints(a, b).altitude).toBe(4000)
+  })
+})
+
+describe('frameAll — تأطير جلسة مستعادة (T6.2)', () => {
+  it('يعيد null لبيانات فارغة', () => {
+    expect(frameAll([])).toBeNull()
+  })
+
+  it('يركز نقطة واحدة مع هامشها', () => {
+    expect(frameAll([buildPoint({ id: 'a', height: 500 })])).toEqual({
+      lat: 24.7136,
+      lon: 46.6753,
+      altitude: 2500,
+    })
+  })
+
+  it('يوسّط كل النقاط ويرفع الكاميرا مع اتساع النطاق', () => {
+    const riyadh = buildPoint({ id: 'a', lat: 24.7136, lon: 46.6753 })
+    const jeddah = buildPoint({ id: 'b', lat: 21.4858, lon: 39.1925 })
+
+    const frame = frameAll([riyadh, jeddah])
+
+    expect(frame).not.toBeNull()
+    expect(frame!.lat).toBeCloseTo(23.0997, 3)
+    expect(frame!.lon).toBeCloseTo(42.9339, 3)
+    expect(frame!.altitude).toBeGreaterThan(2000)
+  })
+
+  it('يعالج خط التاريخ دون قفزة حول الأرض', () => {
+    const east = buildPoint({ id: 'a', lat: 0, lon: 179 })
+    const west = buildPoint({ id: 'b', lat: 0, lon: -179 })
+
+    const frame = frameAll([east, west])
+
+    expect(frame).not.toBeNull()
+    expect(Math.abs(frame!.lon)).toBe(180)
+    expect(frame!.lat).toBe(0)
+  })
+
+  it('يستخدم أعلى ارتفاع أرضي', () => {
+    const low = buildPoint({ id: 'a', height: 100 })
+    const high = buildPoint({
+      id: 'b',
+      height: 3000,
+      lat: 24.7137,
+      lon: 46.6754,
+    })
+
+    expect(frameAll([low, high])!.altitude).toBe(5000)
   })
 })

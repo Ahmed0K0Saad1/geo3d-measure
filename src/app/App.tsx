@@ -10,8 +10,10 @@ import {
   DEFAULT_LAYER_STATE,
   type LayerState,
 } from '@/features/map/useCesiumViewer'
+import { useSessionPersistence } from '@/features/sessions/useSessionPersistence'
 
 export default function App() {
+  useSessionPersistence()
   const [layerState, setLayerState] = useState<LayerState>(DEFAULT_LAYER_STATE)
   const [isClickMode, setIsClickMode] = useState(false)
   const [isPolygonMode, setIsPolygonMode] = useState(false)

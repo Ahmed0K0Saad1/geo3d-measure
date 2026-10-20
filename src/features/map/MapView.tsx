@@ -8,6 +8,7 @@ import { usePointHover } from './usePointHover'
 import { usePolygonDraw } from './usePolygonDraw'
 import { usePolygonEntities } from './usePolygonEntities'
 import { PointTooltip } from './PointTooltip'
+import { useSessionStore } from '@/store/useSessionStore'
 
 interface MapViewProps {
   layerState: LayerState
@@ -29,6 +30,7 @@ export function MapView({
   const containerRef = useRef<HTMLDivElement>(null)
   const viewer = useCesiumViewer(containerRef, layerState)
   const hovered = usePointHover(viewer)
+  const fitAllToken = useSessionStore((state) => state.fitAllToken)
   const { previewRef } = usePolygonDraw(viewer, isPolygonMode, onPolygonModeEnd)
 
   // البيئة الأولى لكل مصدر إدخال في P2: النقاط تظهر على الكرة (ADR-024)
@@ -36,7 +38,7 @@ export function MapView({
   usePathEntities(viewer)
   usePolygonEntities(viewer, previewRef)
   useMapClick(viewer, isClickMode, onClickModeEnd)
-  useFlyTo(viewer, flyToRequest)
+  useFlyTo(viewer, flyToRequest, fitAllToken)
 
   return (
     <div

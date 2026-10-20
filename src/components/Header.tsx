@@ -35,13 +35,6 @@ export function Header({ children }: HeaderProps) {
             </button>
           ))}
         </div>
-
-        <label className="units-control">
-          <span>{t('header.units')}</span>
-          <select disabled title={t('header.comingSoon')}>
-            <option>{t('header.unitsMetric')}</option>
-          </select>
-        </label>
       </div>
     </header>
   )

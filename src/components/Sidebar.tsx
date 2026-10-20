@@ -1,9 +1,12 @@
 import type { GeoPoint } from '@/core/geo/GeoPoint.ts'
+import { ExportPanel } from '@/features/export/ExportPanel'
 import { AreaComparison } from '@/features/polygon/AreaComparison'
 import { PolygonTools } from '@/features/polygon/PolygonTools'
 import { PointsPanel } from '@/features/points/PointsPanel'
 import { PointsTools } from '@/features/points/PointsTools'
 import { ResultsPanel } from '@/features/points/ResultsPanel'
+import { SessionManager } from '@/features/sessions/SessionManager'
+import { SettingsPanel } from '@/features/settings/SettingsPanel'
 
 interface SidebarProps {
   isClickMode: boolean
@@ -33,6 +36,9 @@ export function Sidebar({
         onTogglePolygonMode={onTogglePolygonMode}
       />
       <AreaComparison />
+      <SessionManager />
+      <ExportPanel />
+      <SettingsPanel />
     </aside>
   )
 }

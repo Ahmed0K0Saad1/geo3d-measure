@@ -4,11 +4,11 @@
 
 | البند | القيمة |
 |---|---|
-| آخر تحديث | 2026-10-20 — الجلسة 18 |
-| المرحلة الحالية | **P5 مغلقة تقنيًا ✅ (T5.1–T5.4) — التالية: P6 (الجلسات والتصدير والإعدادات)** |
-| حالة المرحلة | ✅ مغلقة تقنيًا (157/157) — الفحوص اليدوية A-2..A-9 تبقى بنود قبول بصري معلّقة |
-| المهمة الجارية الآن | **لا مهمة جارية — P5 مغلقة تمهيدًا لبدء P6 المعتمدة (ADR-035)** |
-| المهمة التالية | **P6: T6.1 Repository + Dexie ثم T6.2–T6.5** |
+| آخر تحديث | 2026-10-20 — الجلسة 19 |
+| المرحلة الحالية | **P6 مغلقة تقنيًا ✅ (T6.1–T6.5) — التالية: P7 (الجودة والإطلاق)** |
+| حالة المرحلة | ✅ تقنيًا (190/190) — الفحوص اليدوية A-2..A-10 تبقى بنود قبول بصري معلّقة |
+| المهمة الجارية الآن | **لا مهمة جارية — P6 مغلقة تقنيًا (ADR-035)** |
+| المهمة التالية | **P7: تُفصَّل كاملة وتُعتمد من المالك قبل البدء** |
 | إعاقات تقنية | لا يوجد |
 
 ## بنود معلّقة على المالك (Action Items)
@@ -23,6 +23,7 @@
 | A-7 | الفحص اليدوي لقائمة النقاط: ترقيم 1..n · تعديل التسمية (حفظ/إلغاء/Enter/Esc) · حذف مع تصفير الاختيار · الترتيب أعلى/أسفل وتزامن أرقام الكرة · التركيز flyTo · AR/EN | مراجعة T2.7 |
 | A-8 | الفحص البصري لـP4: دبابيس مرقّمة/ملونة · تلميح عند التمرير · خط أزرق والمقطع المحدد أحمر · لوحة النتائج والإجمالي وتبديل الوحدات · التركيز التلقائي عند الإضافة ومن القائمة · AR/EN بلا أخطاء Console | قبل إغلاق مراجعة P4 بصريًا |
 | A-9 | الفحص البصري لـP5: رسم مضلع 3+ رؤوس · معاينة متقطعة · إغلاق بالرأس الأول/الزر/Esc · تراجع/مسح · عدم تعارض وضع النقر · المساحتان والفرق والتحذيرات · تبديل وحدات المساحة · AR/EN وRTL/LTR بلا أخطاء Console | قبل إغلاق مراجعة P5 بصريًا |
+| A-10 | الفحص البصري لـP6: حفظ جلسة ← تعديل ← إعادة تحميل (استعادة تلقائية) · جلسة جديدة/فتح/حذف بخطوتين · تصدير GeoJSON/KML/CSV وفتحها في QGIS/Google Earth/Excel · تغيير الوحدات وصيغة الإحداثيات واللغة وبقاؤها بعد إعادة التحميل · AR/EN بلا أخطاء Console | قبل إغلاق مراجعة P6 بصريًا |
 
 ## مراجع سريعة
 - المتطلبات المعتمدة: `REQUIREMENTS.md` (v1.0)
@@ -38,6 +39,14 @@
 | OQ-3 | إضافة هامش دقة GPS إلى نموذج GeoPoint (مطلوب لـFR-1) | مغلق — أُضيف `accuracy` في T2.2 (ADR-025) |
 
 ## سجل الجلسات (الأحدث أولًا)
+### الجلسة 19 — 2026-10-20 — P6: الحفظ والتصدير والإعدادات (T6.1–T6.5)
+- جديد: `lib/dexie.ts` + `lib/ids.ts` · `services/{sessionTypes,settingsTypes,sessionRepository,settingsRepository,sessionService,exportFormat,exportService}.ts` · `store/{useSessionStore,useSettingsStore,sessionSnapshot}.ts` · `core/coords/formatPoint.ts` · `features/sessions/{SessionManager,useSessionPersistence}.tsx` · `features/export/ExportPanel.tsx` · `features/settings/SettingsPanel.tsx` · `tests/{sessionRepository,sessionService,sessionSnapshot,settingsStore,formatPoint,exportFormat}.test.ts` (33 اختبارًا جديدًا صافيًا).
+- تعديلات: `unitTypes` (tuples للتحقق zod) · `usePointsStore.replacePoints` · `usePolygonStore` (createId مشترك) · `useFlyTo` (`frameAll` + `fitAllToken` + كتم الطيران المزدوج) · `MapView` (تمرير token) · `ResultsPanel`/`AreaComparison` (وحدات مركزية) · `PointsPanel`/`PointTooltip` (صيغة الإحداثيات) · `App` (`useSessionPersistence`) · `Sidebar` (الجلسات/التصدير/الإعدادات) · `Header` (إزالة placeholder الوحدات) · i18n `sessions/export/settings` + `results.units.mi/ft` وإزالة مفاتيح غير مستخدمة · CSS · `tsconfig.node.json` (`DOM`) · ROADMAP/ARCHITECTURE/STATE/DECISIONS.
+- قرار: تنفيذ ADR-035 بلا انحراف معماري؛ الجلسة لقطة (نقاط + مضلع + إعدادات عرض) بلا لغة/كاميرا/تحديدات، واللغة تبقى في `localStorage`. ملاحظة تنفيذية: Dexie 4.4.6 يُستورد `{ Dexie }` بدل default تحت NodeNext لتفادي TS2507.
+- تحقق: lint نظيف · format:check نظيف · test **190/190** (31 ملفًا؛ +33) · build ناجح (1931 وحدة؛ 4.86 MB / gzip 1.34 MB — R-1 متوقع) · dev-server (منفذ 4181): الصفحة ووحدات P6 كلها HTTP 200 · `npm audit --omit=dev`: 0 ثغرات إنتاجية.
+- **P6 مكتملة تقنيًا** — الفحص البصري A-10 معلّق على المالك.
+- الالتزام: `feat(session): add local sessions, GeoJSON/KML/CSV export, and settings (P6)`.
+
 ### الجلسة 18 — 2026-10-20 — P5: المضلع والمساحة (T5.1–T5.4)
 - جديد: `core/geo/areaGeodesic.ts` (GeographicLib `PolygonArea` — `Compute(false, true)` + `Math.abs`) · `areaUtm.ts` (منطقة centroid + Shoelace + تحذيرات `multi-zone`/`multi-hemisphere`/`antimeridian`/`outside-utm-range`) · `core/coords/utm.ts` (`wgs84ToUtmInZone`) · `core/units/{unitTypes,areaConverters}.ts` · `store/usePolygonStore.ts` · `features/map/{usePolygonDraw,usePolygonEntities,polygonGeometry,polygonEntityIds}.ts` · `features/polygon/{PolygonTools,AreaComparison,areaFormat}.tsx` · اختبارات `areaGeodesic`/`areaUtm`/`areaFormat`/`areaUnits`/`polygonStore`/`polygonGeometry` + fixture `area-reference.json` (pyproj 3.7.2 / PROJ 9.5.1).
 - تعديلات: `App` (وضع المضلع وتعارضه مع وضع النقر) · `Sidebar` (PolygonTools + AreaComparison وإزالة قائمة الأدوات المعطلة) · `MapView` (هوكان المضلع + crosshair موحّد) · `utm.test.ts` (+1) · i18n `polygon.*`/`area.*`/`measure.method.*` · CSS للرسم والمقارنة · ROADMAP/ARCHITECTURE/DECISIONS.

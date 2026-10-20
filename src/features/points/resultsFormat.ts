@@ -1,16 +1,18 @@
 import {
+  metersToFeet,
   metersToKilometers,
+  metersToMiles,
   metersToNauticalMiles,
 } from '@/core/units/converters.ts'
+import type { DistanceUnit } from '@/core/units/unitTypes.ts'
 
-/** وحدات المسافة المعروضة في P4 (م · كم · ميل بحري) — ADR-008/033. */
-export type DistanceUnit = 'm' | 'km' | 'nm'
-
-export const DISTANCE_UNITS: readonly DistanceUnit[] = ['m', 'km', 'nm']
+export type { DistanceUnit } from '@/core/units/unitTypes.ts'
 
 const DECIMALS: Record<DistanceUnit, number> = {
   m: 1,
   km: 3,
+  mi: 3,
+  ft: 0,
   nm: 3,
 }
 
@@ -21,12 +23,16 @@ export function convertDistance(meters: number, unit: DistanceUnit): number {
       return meters
     case 'km':
       return metersToKilometers(meters)
+    case 'mi':
+      return metersToMiles(meters)
+    case 'ft':
+      return metersToFeet(meters)
     case 'nm':
       return metersToNauticalMiles(meters)
   }
 }
 
-/** رقم المسافة بمنازل ثابتة: م (1) · كم (3) · ميل بحري (3). */
+/** رقم المسافة بمنازل ثابتة حسب الوحدة. */
 export function formatDistance(meters: number, unit: DistanceUnit): string {
   return convertDistance(meters, unit).toFixed(DECIMALS[unit])
 }

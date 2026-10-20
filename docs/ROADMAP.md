@@ -11,8 +11,8 @@
 | P2 إدخال النقاط | كل طرق إدخال المواقع | نقطة تُدخل بأي طريقة وتظهر على الكرة | ☑ (فحوص بصرية A-2..A-7 معلّقة) |
 | P3 محرك القياس | مسافات واتجاهات موثقة الدقة | نتائج مطابقة للمراجع بهامش موثق | ☑ |
 | P4 العرض البصري | تجربة القياس على الكرة | أضف نقطتين ← ترى المسافة على الكرة ولوحة النتائج | ☑ (فحص بصري A-8 معلّق) |
-| P5 المضلع والمساحة | مساحة بطريقتين مع مقارنة | مضلع مرسوم + مساحتان مع تفسير الفرق | ☐ |
-| P6 الحفظ والتصدير | استمرارية العمل | جلسة تُحفظ وتُستعاد وتُصدَّر (GeoJSON/KML/CSV) | ☐ |
+| P5 المضلع والمساحة | مساحة بطريقتين مع مقارنة | مضلع مرسوم + مساحتان مع تفسير الفرق | ☑ (فحص بصري A-9 معلّق) |
+| P6 الحفظ والتصدير | استمرارية العمل | جلسة تُحفظ وتُستعاد وتُصدَّر (GeoJSON/KML/CSV) | ☑ (فحص بصري A-10 معلّق) |
 | P7 الجودة والإطلاق | جهوزية v1.0 | نسخة مجتازة للاختبارات وجاهزة/منشورة | ☐ |
 
 ---
@@ -166,31 +166,31 @@
 ---
 
 ## P6 — الحفظ والتصدير والإعدادات (معتمدة — ADR-035)
-- [ ] **T6.1 — Repository + Dexie (مخطط v1) + اختبارات** `M`
+- [x] **T6.1 — Repository + Dexie (مخطط v1) + اختبارات** `M`
   1. `src/lib/dexie.ts`: قاعدة `geo3d-measure`، `sessions: 'id, updatedAt'` و`settings: 'key'`، مخطط v1.
   2. `src/services/sessionRepository.ts` + `settingsRepository.ts`: CRUD + إعدادات + `lastSessionId` + أخطاء مرمزة + تحقق zod.
   3. `fake-indexeddb` كـdevDependency + `"DOM"` في `tsconfig.node.json` للاختبارات.
   4. اختبارات CRUD وإعادة فتح القاعدة والجلسة التالفة.
   - القبول: كل اختبارات التخزين خضراء في Node.
-- [ ] **T6.2 — حفظ/فتح/حذف الجلسات + حفظ تلقائي** `M`
+- [x] **T6.2 — حفظ/فتح/حذف الجلسات + حفظ تلقائي** `M`
   1. `src/store/useSessionStore.ts` + `sessionSnapshot.ts` + `useSessionPersistence.ts`.
   2. `src/features/sessions/SessionManager.tsx`: اسم/حفظ/جلسة جديدة/فتح/حذف بخطوتين + حالة الحفظ.
   3. Auto-save بعد أول حفظ صريح (debounce 800ms)، واستعادة آخر جلسة، وتأطير `frameAll` للبيانات المستعادة.
   4. `replacePoints` في مخزن النقاط + إلغاء/تفريغ الحفظ المعلّق قبل تبديل الجلسة.
   - القبول: حفظ → تعديل → استعادة بعد إعادة التحميل · فتح/حذف/جلسة جديدة · بلا تعارض عند التبديل السريع · AR/EN.
-- [ ] **T6.3 — تصدير GeoJSON / KML / CSV** `M`
+- [x] **T6.3 — تصدير GeoJSON / KML / CSV** `M`
   1. `src/services/exportFormat.ts` (نقي): GeoJSON RFC 7946 (Point + Polygon + إغلاق الحلقة) · KML (XML escaping + clampToGround) · CSV (RFC 4180 + BOM عند التنزيل).
   2. `src/services/exportService.ts`: Blob/URL/anchor + أسماء ملفات آمنة.
   3. `src/features/export/ExportPanel.tsx`: ثلاثة أزرار + تعطيل عند غياب البيانات.
   4. اختبارات serializers والـescaping.
   - القبول: الملفات الثلاثة صالحة في QGIS/Google Earth/Excel · العربية سليمة.
-- [ ] **T6.4 — الإعدادات (وحدات، صيغة إحداثيات، لغة)** `M`
+- [x] **T6.4 — الإعدادات (وحدات، صيغة إحداثيات، لغة)** `M`
   1. `src/store/useSettingsStore.ts`: مسافة (m/km/mi/ft/nm) + مساحة (m²/ha/km²/ft²/acre/mi²) + صيغة (DD/DMS/UTM/MGRS) + الافتراضيات (km/ha/DD).
   2. `src/features/settings/SettingsPanel.tsx` + ربط `ResultsPanel` و`AreaComparison`.
   3. `src/core/coords/formatPoint.ts` وعرض الصيغة في `PointsPanel`/`PointTooltip` مع fallback إلى DMS.
   4. حفظ الإعدادات في Dexie، واللغة تبقى في `localStorage`.
   - القبول: التغيير ينعكس فورًا ويبقى بعد إعادة التحميل · AR/EN · بلا أخطاء Console.
-- [ ] **T6.5 — استكمال الترجمة 100% AR/EN** `S`
+- [x] **T6.5 — استكمال الترجمة 100% AR/EN** `S`
   1. كل مفاتيح P5/P6 في `ar.json`/`en.json` + توسيع `tests/i18n.test.ts`.
   2. مراجعة النصوص المضمّنة في JSX وإزالة المفاتيح غير المستخدمة.
   3. مراجعة RTL/LTR للأرقام والإحداثيات وأزرار التصدير.

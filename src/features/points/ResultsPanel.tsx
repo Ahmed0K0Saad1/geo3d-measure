@@ -1,14 +1,11 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { HaversineStrategy } from '@/core/geo/haversine.ts'
 import { computePath } from '@/core/geo/path.ts'
+import { DISTANCE_UNITS } from '@/core/units/unitTypes.ts'
 import { usePointsStore } from '@/store/usePointsStore'
-import {
-  DISTANCE_UNITS,
-  formatBearing,
-  formatDistance,
-  type DistanceUnit,
-} from './resultsFormat'
+import { useSettingsStore } from '@/store/useSettingsStore'
+import { formatBearing, formatDistance } from './resultsFormat'
 
 const strategy = new HaversineStrategy()
 
@@ -24,7 +21,8 @@ export function ResultsPanel() {
     (state) => state.selectedSegmentIndex,
   )
   const selectSegment = usePointsStore((state) => state.selectSegment)
-  const [unit, setUnit] = useState<DistanceUnit>('km')
+  const unit = useSettingsStore((state) => state.distanceUnit)
+  const setUnit = useSettingsStore((state) => state.setDistanceUnit)
 
   const result = useMemo(() => computePath(points, strategy), [points])
 

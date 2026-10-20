@@ -1,5 +1,7 @@
 import { useTranslation } from 'react-i18next'
+import { formatPoint } from '@/core/coords/formatPoint.ts'
 import { usePointsStore } from '@/store/usePointsStore'
+import { useSettingsStore } from '@/store/useSettingsStore'
 import { clampTooltipPosition } from './tooltipPosition'
 import type { HoveredPoint } from './usePointHover'
 
@@ -14,6 +16,7 @@ interface PointTooltipProps {
 export function PointTooltip({ hovered }: PointTooltipProps) {
   const { t } = useTranslation()
   const points = usePointsStore((state) => state.points)
+  const coordinateFormat = useSettingsStore((state) => state.coordinateFormat)
   const index = points.findIndex((point) => point.id === hovered.pointId)
 
   if (index === -1) {
@@ -42,7 +45,7 @@ export function PointTooltip({ hovered }: PointTooltipProps) {
       <div className="point-tooltip__body">
         <span className="point-tooltip__label">{label}</span>
         <span className="point-tooltip__coords" dir="ltr">
-          {point.lat.toFixed(5)}, {point.lon.toFixed(5)}
+          {formatPoint(point, coordinateFormat)}
         </span>
       </div>
     </div>

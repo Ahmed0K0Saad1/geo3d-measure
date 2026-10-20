@@ -154,4 +154,20 @@ describe('مخزن النقاط (usePointsStore)', () => {
     usePointsStore.getState().reorderPoints(['c', 'a', 'b'])
     expect(usePointsStore.getState().selectedSegmentIndex).toBeNull()
   })
+
+  it('replacePoints يستبدل الكل ويصفّر الاختيارات (استعادة جلسة)', () => {
+    const pointA = buildPoint({ id: 'a' })
+    const pointB = buildPoint({ id: 'b' })
+    usePointsStore.setState({
+      points: [buildPoint({ id: 'old' })],
+      selectedPointId: 'old',
+      selectedSegmentIndex: 0,
+    })
+
+    usePointsStore.getState().replacePoints([pointA, pointB])
+
+    expect(currentPoints()).toEqual([pointA, pointB])
+    expect(usePointsStore.getState().selectedPointId).toBeNull()
+    expect(usePointsStore.getState().selectedSegmentIndex).toBeNull()
+  })
 })

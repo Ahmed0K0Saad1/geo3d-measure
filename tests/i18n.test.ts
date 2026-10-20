@@ -18,6 +18,18 @@ function collectEntries(
   return entries
 }
 
+function getPath(value: Record<string, unknown>, path: string): unknown {
+  return path
+    .split('.')
+    .reduce<unknown>(
+      (current, key) =>
+        current && typeof current === 'object'
+          ? (current as Record<string, unknown>)[key]
+          : undefined,
+      value,
+    )
+}
+
 describe('موارد الترجمة', () => {
   it('ar و en لهما نفس المفاتيح وقيم غير فارغة', () => {
     const arEntries = collectEntries(ar)
@@ -28,6 +40,36 @@ describe('موارد الترجمة', () => {
     )
     for (const [key, text] of [...arEntries, ...enEntries]) {
       expect(text.trim(), `قيمة فارغة للمفتاح ${key}`).not.toBe('')
+    }
+  })
+
+  it('يشمل مفاتيح P6 الأساسية في اللغتين', () => {
+    const required = [
+      'sessions.title',
+      'sessions.save',
+      'sessions.saveError',
+      'export.title',
+      'export.formats.geojson',
+      'export.formats.kml',
+      'export.formats.csv',
+      'settings.title',
+      'settings.distanceUnit',
+      'settings.areaUnit',
+      'settings.coordinateFormat',
+      'settings.language',
+      'settings.formats.DD',
+      'settings.formats.MGRS',
+      'results.units.mi',
+      'results.units.ft',
+    ]
+
+    for (const path of required) {
+      expect(getPath(ar, path), `مفتاح عربي مفقود: ${path}`).toEqual(
+        expect.any(String),
+      )
+      expect(getPath(en, path), `مفتاح إنجليزي مفقود: ${path}`).toEqual(
+        expect.any(String),
+      )
     }
   })
 })

@@ -1,25 +1,12 @@
 /** أنواع وحدات القياس المشتركة — بلا نصوص واجهة (ADR-004/008). */
 
-export type DistanceUnit = 'm' | 'km' | 'mi' | 'ft' | 'nm'
+export const DISTANCE_UNITS = ['m', 'km', 'mi', 'ft', 'nm'] as const
 
-export const DISTANCE_UNITS: readonly DistanceUnit[] = [
-  'm',
-  'km',
-  'mi',
-  'ft',
-  'nm',
-]
+export type DistanceUnit = (typeof DISTANCE_UNITS)[number]
 
-export type AreaUnit = 'm2' | 'ha' | 'km2' | 'ft2' | 'acre' | 'mi2'
+export const AREA_UNITS = ['m2', 'ha', 'km2', 'ft2', 'acre', 'mi2'] as const
 
-export const AREA_UNITS: readonly AreaUnit[] = [
-  'm2',
-  'ha',
-  'km2',
-  'ft2',
-  'acre',
-  'mi2',
-]
+export type AreaUnit = (typeof AREA_UNITS)[number]
 
 export const METRIC_AREA_UNITS: readonly AreaUnit[] = ['m2', 'ha', 'km2']
 
