@@ -250,6 +250,22 @@
 
 ---
 
+## ADR-038 — النشر على Vercel: HTTPS ورؤوس أمان وكاش أصول 🕓 (2026-10-21 — T7.5)
+- **السياق:** v1.0 يحتاج استضافة ثابتة على HTTPS (إلزامي لـGPS)، مع أصول Cesium كبيرة وتوكن ion وقت البناء. التطبيق بلا Router، فلا يحتاج rewrites. النشر على Vercel معتمد من المالك (الجلسة 20)، وNginx بديل موثق.
+- **القرار:**
+  1. استضافة Vercel للمجلد `dist` (`framework: vite`، `npm ci`، `npm run build`، `outputDirectory: dist`).
+  2. `vercel.json` يضيف رؤوس أمان لكل المسارات: `X-Content-Type-Options: nosniff` · `X-Frame-Options: DENY` · `Referrer-Policy: strict-origin-when-cross-origin` · `Permissions-Policy: geolocation=(self), camera=(), microphone=()` · `Cross-Origin-Opener-Policy: same-origin` · `Strict-Transport-Security: max-age=31536000; includeSubDomains`.
+  3. الكاش: `/assets/*` (مبصومة بـhash) `max-age=31536000, immutable` · `/cesiumStatic/*` (غير مبصومة) `max-age=86400, stale-while-revalidate=604800` · `/` و`/index.html` `no-cache`.
+  4. لا `rewrites` ولا `routes` عامة؛ التطبيق بلا React Router، وأي Router مستقبلي يحتاج fallback صريحًا.
+  5. التوكن عبر متغير Vercel `VITE_CESIUM_ION_TOKEN` (Production + Preview)، يُقرأ وقت البناء، ويُنشأ توكن ion مخصص مقيّد بالنطاق/الأصول. لا أسرار في `VITE_*`.
+  6. **CSP مؤجلة** إلى ما بعد الإطلاق بوضع `Report-Only` لأن Cesium يحتاج عادةً `worker-src blob:` و`wasm-unsafe-eval` وصور `data:`/`blob:` ونطاقات Esri/ion؛ لا تُفعّل سياسة صارمة بلا اختبار.
+  7. وسم `v1.0.0` لا يُنشأ إلا بعد نشر ناجح + توقيع المالك على `PRE_LAUNCH_CHECKLIST.md`.
+- **البدائل المرفوضة:** Netlify/GitHub Pages الآن (Vercel معتمد) · rewrite عام (لا Router؛ يخفي 404) · CSP صارمة فورًا (خطر كسر Cesium) · كاش طويل لـ`cesiumStatic` (تعارض Workers بعد الترقية) · token في الكود أو `.env` مرفوع.
+- **الأثر:** `vercel.json` · `docs/DEPLOYMENT.md` · `README.md` · `docs/PRE_LAUNCH_CHECKLIST.md` · `docs/ARCHITECTURE.md` (§11).
+- **التحقق المحلي (الجلسة 23):** `vercel.json` صالح (5 قواعد رؤوس، بلا rewrites/routes) · `npm run build` ناجح · `npm audit --omit=dev` = 0 · `.env` مستثنى من Git والتوكن موجود محليًا. **التحقق الحي مؤجل** حتى اعتماد المالك/النشر.
+
+---
+
 ## قالب قرار جديد (انسخه عند الحاجة)
 ```md
 ## ADR-0xx — العنوان 🕓/✅ (YYYY-MM-DD)

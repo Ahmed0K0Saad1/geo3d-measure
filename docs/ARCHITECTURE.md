@@ -75,7 +75,7 @@ geo3d-measure/
 │  ├─ lib/                   # dexie · validators · ids · collections
 │  └─ types/env.d.ts
 ├─ tests/                    # Vitest + fixtures + accessibility.test.tsx + e2e/manual-scenarios.md
-├─ .env.example · .gitignore · AGENTS.md · README.md · vercel.json (T7.5)
+├─ .env.example · .gitignore · AGENTS.md · README.md · vercel.json
 ```
 
 ## 4) محرك القياس (قلب المشروع)

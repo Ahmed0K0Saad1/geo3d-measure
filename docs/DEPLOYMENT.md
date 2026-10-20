@@ -57,7 +57,7 @@ vercel env add VITE_CESIUM_ION_TOKEN preview
 vercel --prod
 ```
 
-### 3.3 `vercel.json` (يُضاف في T7.5)
+### 3.3 `vercel.json` (منفّذ في T7.5)
 ```json
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
@@ -76,7 +76,11 @@ vercel --prod
           "key": "Permissions-Policy",
           "value": "geolocation=(self), camera=(), microphone=()"
         },
-        { "key": "Cross-Origin-Opener-Policy", "value": "same-origin" }
+        { "key": "Cross-Origin-Opener-Policy", "value": "same-origin" },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=31536000; includeSubDomains"
+        }
       ]
     },
     {
@@ -113,6 +117,7 @@ vercel --prod
 - أصول `/assets/*` تحمل بصمة hash، لذا `immutable` آمنة. `cesiumStatic` غير مبصومة؛ استخدم كاشًا قصيرًا (يومًا) لتفادي تعارض العاملين (Workers) بعد الترقية.
 - `index.html` بلا كاش حتى يلتقط المتصفح أسماء الأصول الجديدة.
 - `Permissions-Policy: geolocation=(self)` ضرورية لعمل GPS على النطاق نفسه.
+- `Strict-Transport-Security` مفعّل لسنة مع `includeSubDomains`؛ تأكد أن كل النطاقات الفرعية تعمل على HTTPS قبل ربط نطاق مخصص.
 - **CSP:** لا تُفعّلها مباشرة في أول نشر. Cesium يحتاج عادةً `worker-src blob:` و`wasm-unsafe-eval` وصورًا من نطاقات Esri/ion و`data:`/`blob:`؛ ابدأ بـ`Content-Security-Policy-Report-Only` وراقب التقارير ثم فعّل السياسة.
 
 ### 3.4 تقييد توكن Cesium ion
