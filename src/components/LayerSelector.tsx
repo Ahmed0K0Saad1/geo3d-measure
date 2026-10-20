@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { BASE_LAYER_IDS, type BaseLayerId } from '@/features/map/layerSources'
-import type { LayerState } from '@/features/map/useCesiumViewer'
+import type { LayerState } from '@/features/map/layerState'
 
 interface LayerSelectorProps {
   state: LayerState

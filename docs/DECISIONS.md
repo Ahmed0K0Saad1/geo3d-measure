@@ -238,6 +238,16 @@
 - **الأثر:** `tests/accessibility.test.tsx` · `tests/e2e/manual-scenarios.md` · `vitest.config.ts` · `tsconfig.node.json` · `package.json` · إصلاح `ResultsPanel`/`ar.json`/`en.json` ليطابق `aria-label` النص المرئي (WCAG 2.5.3).
 - **التحقق (الجلسة 20):** 192/192 · axe أخضر في الحالتين · تغطية 55.85% statements · lint/format/build خضراء.
 
+## ADR-037 — الأداء: Rolldown codeSplitting + تحميل Cesium كسولًا ✅ (2026-10-21 — T7.2)
+- **السياق:** R-1/NFR-1: Cesium يمثل معظم الحزمة (4.17MB خام). مخطط أولي اقترح `manualChunks` ككائن، لكن Vite 8.3 يعمل على Rolldown ولا يدعم صيغة الكائن، و`rollupOptions` أصبح مهجورًا.
+- **القرار:**
+  1. التقسيم عبر `build.rolldownOptions.output.codeSplitting.groups` بأربع مجموعات: `cesium` · `react` · `i18n` · `vendor` (zustand/zod/proj4/mgrs/dexie/geographiclib).
+  2. `MapView` يُحمَّل بـ`lazy()` + `Suspense` مع `MapLoading`، فيبقى الهيكل والأدوات قابلين للاستخدام قبل تحميل Cesium.
+  3. فصل `LayerState`/`DEFAULT_LAYER_STATE` إلى `layerState.ts` بلا Cesium؛ استيرادهما من `useCesiumViewer` كان يجعل Cesium ضمن الرسم الثابت لحزمة الدخول.
+- **البدائل المرفوضة:** `manualChunks` ككائن (غير مدعوم في Rolldown) · الاكتفاء بتقسيم chunks بلا lazy (لا يحسّن الإقلاع) · lazy للشريط الجانبي كله (يكسر أدوات الإدخال الفورية) · رفع `chunkSizeWarningLimit` لإخفاء التحذير.
+- **الأثر:** `vite.config.ts` · `src/app/App.tsx` · `src/features/map/{MapLoading,layerState}.ts(x)` · `MapView`/`LayerSelector`/`useCesiumViewer` · `index.css` · `ar.json`/`en.json`.
+- **التحقق (الجلسة 21):** الحزمة الأولية 208.8KB gzip (كانت 1.34MB) · Cesium 1118.6KB gzip كسول وغير موجود في `index.html` · 192/192 · preview/headless سليمان.
+
 ---
 
 ## قالب قرار جديد (انسخه عند الحاجة)

@@ -1,16 +1,20 @@
-import { useCallback, useState } from 'react'
+import { lazy, Suspense, useCallback, useState } from 'react'
 import { Header } from '@/components/Header'
 import { LayerSelector } from '@/components/LayerSelector'
 import { Sidebar } from '@/components/Sidebar'
 import type { GeoPoint } from '@/core/geo/GeoPoint.ts'
-import { MapView } from '@/features/map/MapView'
+import { MapLoading } from '@/features/map/MapLoading'
 import type { BaseLayerId } from '@/features/map/layerSources'
+import { DEFAULT_LAYER_STATE, type LayerState } from '@/features/map/layerState'
 import type { FlyToRequest } from '@/features/map/useFlyTo'
-import {
-  DEFAULT_LAYER_STATE,
-  type LayerState,
-} from '@/features/map/useCesiumViewer'
 import { useSessionPersistence } from '@/features/sessions/useSessionPersistence'
+
+// تحميل Cesium مؤجل حتى بعد ظهور الهيكل (T7.2 — R-1): يقلّل JS الدخول
+// ويُبقي أدوات الشريط الجانبي قابلة للاستخدام أثناء التحميل.
+const MapView = lazy(async () => {
+  const module = await import('@/features/map/MapView')
+  return { default: module.MapView }
+})
 
 export default function App() {
   useSessionPersistence()
@@ -70,14 +74,16 @@ export default function App() {
           onTogglePolygonMode={togglePolygonMode}
           onFocusPoint={focusPoint}
         />
-        <MapView
-          layerState={layerState}
-          isClickMode={isClickMode}
-          onClickModeEnd={endClickMode}
-          isPolygonMode={isPolygonMode}
-          onPolygonModeEnd={endPolygonMode}
-          flyToRequest={flyToRequest}
-        />
+        <Suspense fallback={<MapLoading />}>
+          <MapView
+            layerState={layerState}
+            isClickMode={isClickMode}
+            onClickModeEnd={endClickMode}
+            isPolygonMode={isPolygonMode}
+            onPolygonModeEnd={endPolygonMode}
+            flyToRequest={flyToRequest}
+          />
+        </Suspense>
       </div>
     </div>
   )

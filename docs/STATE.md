@@ -4,11 +4,11 @@
 
 | البند | القيمة |
 |---|---|
-| آخر تحديث | 2026-10-21 — الجلسة 20 |
-| المرحلة الحالية | **P7 — الجودة والإطلاق** (T7.1 مكتملة — T7.2 التالية) |
-| حالة المرحلة | ⏳ T7.1 ✅ (192/192) — T7.2–T7.5 قيد التنفيذ |
-| المهمة الجارية الآن | **T7.2 — الأداء: تقسيم الحزم + زمن الإقلاع** |
-| المهمة التالية | **T7.2 ثم T7.3 → T7.4 → T7.5 (Vercel)** |
+| آخر تحديث | 2026-10-21 — الجلسة 21 |
+| المرحلة الحالية | **P7 — الجودة والإطلاق** (T7.1–T7.2 مكتملتان — T7.3 التالية) |
+| حالة المرحلة | ⏳ T7.1–T7.2 ✅ (192/192) — T7.3–T7.5 قيد التنفيذ |
+| المهمة الجارية الآن | **T7.3 — موبايل + RTL/LTR + إتاحة أساسية** |
+| المهمة التالية | **T7.3 ثم T7.4 → T7.5 (Vercel)** |
 | إعاقات تقنية | لا يوجد |
 
 ## بنود معلّقة على المالك (Action Items)
@@ -40,6 +40,15 @@
 | OQ-3 | إضافة هامش دقة GPS إلى نموذج GeoPoint (مطلوب لـFR-1) | مغلق — أُضيف `accuracy` في T2.2 (ADR-025) |
 
 ## سجل الجلسات (الأحدث أولًا)
+### الجلسة 21 — 2026-10-21 — P7/T7.2: تقسيم الحزم وتحميل Cesium كسولًا
+- جديد: `src/features/map/layerState.ts` (LayerState + DEFAULT_LAYER_STATE بلا Cesium) · `src/features/map/MapLoading.tsx` (شاشة انتظار `role="status"` + spinner يحترم reduced-motion).
+- تعديلات: `vite.config.ts` (`build.rolldownOptions.output.codeSplitting.groups`: cesium/react/i18n/vendor) · `App.tsx` (`lazy()` + `Suspense`) · `MapView`/`LayerSelector`/`useCesiumViewer` (استيراد layerState) · i18n `map.loading` · CSS.
+- اكتشاف مهم: استيراد `DEFAULT_LAYER_STATE` من `useCesiumViewer` كان يسحب Cesium كله إلى حزمة الدخول رغم lazy؛ فصله أزال Cesium من `index.html` وmodulepreload.
+- قرار: ADR-037 — Rolldown `codeSplitting.groups` بدل `manualChunks` الكائني، مع lazy للمكوّن وليس فقط تقسيم chunks.
+- تحقق: lint نظيف · format:check نظيف · test **192/192** · build ناجح (1933 وحدة) · قياس gzip: entry+react+i18n+vendor = **208.8KB** · cesium = **1118.6KB** (كسول) · MapView = 4.4KB · `index.html` بلا Cesium · preview: index/cesium JS/CSS/worker/MapView كلها HTTP 200 · Chrome headless أنتج `.map-view` و`.cesium-widget` (تحميل كسول ناجح).
+- **T7.2 مكتملة** — التالية T7.3 (الموبايل والإتاحة البصرية).
+- الالتزام: `perf(build): split bundles and lazy-load Cesium (T7.2)`.
+
 ### الجلسة 20 — 2026-10-21 — P7/T7.1: بوابة الإتاحة والاختبارات
 - تفصيل P7 كاملة (T7.1–T7.5) واعتمادها من المالك: Vercel للنشر + التزام Git لكل مهمة.
 - جديد: `tests/accessibility.test.tsx` (jsdom + fake-indexeddb + axe-core، وسوم WCAG A/AA، حالتا AR/RTL وEN/LTR مع نقاط ومضلع) · `tests/e2e/manual-scenarios.md` (12 سيناريو يغطي A-2..A-11 + الموبايل + الفشل الشبكي) · سكربت `test:coverage`.

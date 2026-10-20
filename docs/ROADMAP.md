@@ -209,11 +209,12 @@
   4. `tests/e2e/manual-scenarios.md`: 12 سيناريو يغطي A-2..A-11 + الموبايل + الفشل الشبكي + HTTPS/GPS.
   5. إصلاح اكتشفه axe: `aria-label` لأزرار المقاطع أصبح يطابق النص المرئي (WCAG 2.5.3).
   - القبول: **192/192** · axe بلا انتهاكات A/AA · تغطية 55.85% · lint/format/build خضراء.
-- [ ] **T7.2 — الأداء: تقسيم الحزم + زمن الإقلاع** `M`
+- [x] **T7.2 — الأداء: تقسيم الحزم + زمن الإقلاع** `M` ☑
   1. `vite.config.ts`: `build.rolldownOptions.output.codeSplitting.groups` (Vite 8/Rolldown) لمجموعات cesium/react/i18n/vendor — **لا** صيغة `manualChunks` الكائنية غير المدعومة.
   2. `MapView` عبر `lazy()` + `Suspense` مع `MapLoading` ورسالة i18n و`role="status"`؛ Cesium لا يُحمَّل مع هيكل الدخول.
-  3. قياس أحجام entry/Cesium/vendor بعد البناء وتسجيلها.
-  - القبول: chunk Cesium منفصل وكسول · entry + الحزم الثابتة < 300KB gzip · إجمالي أولي < 2MB · بناء ناجح.
+  3. فصل `LayerState`/`DEFAULT_LAYER_STATE` في `layerState.ts` بلا Cesium، لأن استيرادها من `useCesiumViewer` كان يسحب Cesium إلى حزمة الدخول.
+  4. القياس الفعلي: entry + react + i18n + vendor = **208.8KB gzip** · cesium = **1118.6KB gzip** (كسول) · MapView = 4.4KB.
+  - القبول: **محقق** — Cesium غير موجود في `index.html`/modulepreload · entry < 300KB gzip · إجمالي أولي < 2MB · 192/192 · build ناجح.
 - [ ] **T7.3 — موبايل + RTL/LTR polish + إتاحة أساسية** `M`
   1. `index.css`: `100dvh` مع fallback · breakpoint 768px · تخطيط عمودي (خريطة 50dvh ثم الشريط) · التفاف الهيدر · قائمة طبقات بعرض `min(280px, calc(100vw - 24px))` · أهداف لمس ≥ 44px · `:focus-visible` موحّد.
   2. تدقيق تباين كل أزواج النصوص وتعديل ما يقل عن 4.5:1.

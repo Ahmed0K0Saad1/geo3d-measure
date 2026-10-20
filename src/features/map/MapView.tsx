@@ -1,5 +1,6 @@
 import { useRef } from 'react'
-import { useCesiumViewer, type LayerState } from './useCesiumViewer'
+import { useCesiumViewer } from './useCesiumViewer'
+import type { LayerState } from './layerState'
 import { useFlyTo, type FlyToRequest } from './useFlyTo'
 import { useMapClick } from './useMapClick'
 import { usePathEntities } from './usePathEntities'

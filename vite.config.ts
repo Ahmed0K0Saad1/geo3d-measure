@@ -19,6 +19,34 @@ export default defineConfig({
     // يُخبر Cesium بمكان أصوله الثابتة في وقت التشغيل
     CESIUM_BASE_URL: JSON.stringify(`/${cesiumBaseUrl}`),
   },
+  build: {
+    // Vite 8 يستخدم Rolldown: الصيغة الكائنية لـmanualChunks غير مدعومة،
+    // والتقسيم الصحيح عبر codeSplitting.groups (T7.2 — R-1).
+    rolldownOptions: {
+      output: {
+        codeSplitting: {
+          groups: [
+            {
+              name: 'cesium',
+              test: /node_modules[\\/](@cesium|cesium)[\\/]/,
+            },
+            {
+              name: 'react',
+              test: /node_modules[\\/](react|react-dom|scheduler)[\\/]/,
+            },
+            {
+              name: 'i18n',
+              test: /node_modules[\\/](i18next|react-i18next)[\\/]/,
+            },
+            {
+              name: 'vendor',
+              test: /node_modules[\\/](zustand|zod|proj4|mgrs|dexie|geographiclib-geodesic)[\\/]/,
+            },
+          ],
+        },
+      },
+    },
+  },
   plugins: [
     react(),
     viteStaticCopy({

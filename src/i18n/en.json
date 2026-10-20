@@ -5,6 +5,9 @@
   "header": {
     "language": "Language"
   },
+  "map": {
+    "loading": "Loading the globe…"
+  },
   "layers": {
     "title": "Layers",
     "baseMaps": "Base map",

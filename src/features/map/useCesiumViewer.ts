@@ -14,6 +14,7 @@ import {
   WORLD_TERRAIN_ASSET_ID,
   type BaseLayerId,
 } from './layerSources'
+import type { LayerState } from './layerState'
 
 const ionToken = import.meta.env.VITE_CESIUM_ION_TOKEN
 
@@ -24,20 +25,6 @@ if (!ionToken) {
 }
 
 Ion.defaultAccessToken = ionToken
-
-/** حالة الطبقات — يحتفظ بها React ويُطبّقها هذا الخطاف (ADR-021/022). */
-export interface LayerState {
-  baseLayer: BaseLayerId
-  labels: boolean
-  terrain: boolean
-}
-
-/** الوضع الابتدائي: صور + تسميات + تضاريس. */
-export const DEFAULT_LAYER_STATE: LayerState = {
-  baseLayer: 'imagery',
-  labels: true,
-  terrain: true,
-}
 
 /** كاش على مستوى الوحدة: التضاريس تُجلب من ion مرة واحدة وتُعاد عند الطلب. */
 let worldTerrainPromise: Promise<CesiumTerrainProvider> | null = null
