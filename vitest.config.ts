@@ -11,7 +11,15 @@ export default defineConfig({
     },
   },
   test: {
+    // الاختبارات المنطقية تعمل في Node؛ اختبارات الوصولية تُعلن jsdom محليًا
+    // عبر `// @vitest-environment jsdom` كي لا تتأثر سرعة بقية الاختبارات.
     environment: 'node',
-    include: ['tests/**/*.test.ts'],
+    include: ['tests/**/*.test.{ts,tsx}'],
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json-summary'],
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: ['src/main.tsx'],
+    },
   },
 })

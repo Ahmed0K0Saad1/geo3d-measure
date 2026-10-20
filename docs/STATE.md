@@ -4,11 +4,11 @@
 
 | البند | القيمة |
 |---|---|
-| آخر تحديث | 2026-10-20 — الجلسة 19 |
-| المرحلة الحالية | **P6 مغلقة تقنيًا ✅ (T6.1–T6.5) — التالية: P7 (الجودة والإطلاق)** |
-| حالة المرحلة | ✅ تقنيًا (190/190) — الفحوص اليدوية A-2..A-10 تبقى بنود قبول بصري معلّقة |
-| المهمة الجارية الآن | **لا مهمة جارية — P6 مغلقة تقنيًا (ADR-035)** |
-| المهمة التالية | **P7: تُفصَّل كاملة وتُعتمد من المالك قبل البدء** |
+| آخر تحديث | 2026-10-21 — الجلسة 20 |
+| المرحلة الحالية | **P7 — الجودة والإطلاق** (T7.1 مكتملة — T7.2 التالية) |
+| حالة المرحلة | ⏳ T7.1 ✅ (192/192) — T7.2–T7.5 قيد التنفيذ |
+| المهمة الجارية الآن | **T7.2 — الأداء: تقسيم الحزم + زمن الإقلاع** |
+| المهمة التالية | **T7.2 ثم T7.3 → T7.4 → T7.5 (Vercel)** |
 | إعاقات تقنية | لا يوجد |
 
 ## بنود معلّقة على المالك (Action Items)
@@ -24,6 +24,7 @@
 | A-8 | الفحص البصري لـP4: دبابيس مرقّمة/ملونة · تلميح عند التمرير · خط أزرق والمقطع المحدد أحمر · لوحة النتائج والإجمالي وتبديل الوحدات · التركيز التلقائي عند الإضافة ومن القائمة · AR/EN بلا أخطاء Console | قبل إغلاق مراجعة P4 بصريًا |
 | A-9 | الفحص البصري لـP5: رسم مضلع 3+ رؤوس · معاينة متقطعة · إغلاق بالرأس الأول/الزر/Esc · تراجع/مسح · عدم تعارض وضع النقر · المساحتان والفرق والتحذيرات · تبديل وحدات المساحة · AR/EN وRTL/LTR بلا أخطاء Console | قبل إغلاق مراجعة P5 بصريًا |
 | A-10 | الفحص البصري لـP6: حفظ جلسة ← تعديل ← إعادة تحميل (استعادة تلقائية) · جلسة جديدة/فتح/حذف بخطوتين · تصدير GeoJSON/KML/CSV وفتحها في QGIS/Google Earth/Excel · تغيير الوحدات وصيغة الإحداثيات واللغة وبقاؤها بعد إعادة التحميل · AR/EN بلا أخطاء Console | قبل إغلاق مراجعة P6 بصريًا |
+| A-11 | الفحص اليدوي للإتاحة والموبايل (P7): Tab/Enter/Escape · قارئ شاشة · تباين AA · 360×640 و390×844 و844×390 · RTL/LTR · GPS على HTTPS | قبل وسم v1.0.0 |
 
 ## مراجع سريعة
 - المتطلبات المعتمدة: `REQUIREMENTS.md` (v1.0)
@@ -39,6 +40,15 @@
 | OQ-3 | إضافة هامش دقة GPS إلى نموذج GeoPoint (مطلوب لـFR-1) | مغلق — أُضيف `accuracy` في T2.2 (ADR-025) |
 
 ## سجل الجلسات (الأحدث أولًا)
+### الجلسة 20 — 2026-10-21 — P7/T7.1: بوابة الإتاحة والاختبارات
+- تفصيل P7 كاملة (T7.1–T7.5) واعتمادها من المالك: Vercel للنشر + التزام Git لكل مهمة.
+- جديد: `tests/accessibility.test.tsx` (jsdom + fake-indexeddb + axe-core، وسوم WCAG A/AA، حالتا AR/RTL وEN/LTR مع نقاط ومضلع) · `tests/e2e/manual-scenarios.md` (12 سيناريو يغطي A-2..A-11 + الموبايل + الفشل الشبكي) · سكربت `test:coverage`.
+- تعديلات: `vitest.config.ts` (شمول `.tsx` + تغطية v8) · `tsconfig.node.json` (`strict` + `jsx` + شمول `.tsx`) · devDeps: axe-core 4.14 · jsdom 29.1 (متوافق Node 24.14) · @testing-library/react 16.3 · @testing-library/dom · @vitest/coverage-v8 5.0.5 · `ResultsPanel`/i18n: `aria-label` يطابق النص المرئي (WCAG 2.5.3) بعد اكتشاف axe.
+- قرار: ADR-036 — اختبار إتاحة حقيقي في jsdom + axe، والتباين/الخريطة يدويًا (لا WebGL/تخطيط في jsdom).
+- تحقق: lint نظيف · format:check نظيف · test **192/192** (32 ملفًا؛ +2) · coverage **55.85%** statements (Cesium hooks غير مغطاة آليًا) · build ناجح (1931 وحدة؛ 4.86 MB / gzip 1.34 MB — R-1 كما هو).
+- **T7.1 مكتملة** — التالية T7.2 (تقسيم الحزم + lazy Cesium).
+- الالتزام: `test(quality): add WCAG AA axe tests and manual E2E scenarios (T7.1)`.
+
 ### الجلسة 19 — 2026-10-20 — P6: الحفظ والتصدير والإعدادات (T6.1–T6.5)
 - جديد: `lib/dexie.ts` + `lib/ids.ts` · `services/{sessionTypes,settingsTypes,sessionRepository,settingsRepository,sessionService,exportFormat,exportService}.ts` · `store/{useSessionStore,useSettingsStore,sessionSnapshot}.ts` · `core/coords/formatPoint.ts` · `features/sessions/{SessionManager,useSessionPersistence}.tsx` · `features/export/ExportPanel.tsx` · `features/settings/SettingsPanel.tsx` · `tests/{sessionRepository,sessionService,sessionSnapshot,settingsStore,formatPoint,exportFormat}.test.ts` (33 اختبارًا جديدًا صافيًا).
 - تعديلات: `unitTypes` (tuples للتحقق zod) · `usePointsStore.replacePoints` · `usePolygonStore` (createId مشترك) · `useFlyTo` (`frameAll` + `fitAllToken` + كتم الطيران المزدوج) · `MapView` (تمرير token) · `ResultsPanel`/`AreaComparison` (وحدات مركزية) · `PointsPanel`/`PointTooltip` (صيغة الإحداثيات) · `App` (`useSessionPersistence`) · `Sidebar` (الجلسات/التصدير/الإعدادات) · `Header` (إزالة placeholder الوحدات) · i18n `sessions/export/settings` + `results.units.mi/ft` وإزالة مفاتيح غير مستخدمة · CSS · `tsconfig.node.json` (`DOM`) · ROADMAP/ARCHITECTURE/STATE/DECISIONS.

@@ -88,7 +88,8 @@ export function ResultsPanel() {
                         className="results-segment"
                         aria-pressed={isSelected}
                         aria-label={t('results.selectSegment', {
-                          number: index + 1,
+                          from,
+                          to,
                         })}
                         onClick={() => selectSegment(isSelected ? null : index)}
                       >

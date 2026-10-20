@@ -91,7 +91,7 @@
       "finalBearing": "End bearing"
     },
     "segmentValue": "{{from}} → {{to}}",
-    "selectSegment": "Highlight segment {{number}} on the globe",
+    "selectSegment": "Highlight segment {{from}} → {{to}} on the globe",
     "total": "Total",
     "method": "Method: {{method}}"
   },

@@ -91,7 +91,7 @@
       "finalBearing": "اتجاه النهاية"
     },
     "segmentValue": "{{from}} → {{to}}",
-    "selectSegment": "تمييز المقطع {{number}} على الخريطة",
+    "selectSegment": "تمييز المقطع {{from}} → {{to}} على الخريطة",
     "total": "الإجمالي",
     "method": "المنهجية: {{method}}"
   },

@@ -7,6 +7,8 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
+    "strict": true,
+    "jsx": "react-jsx",
 
     /* Bundler mode */
     "module": "nodenext",
@@ -23,5 +25,5 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["vite.config.ts", "vitest.config.ts", "tests/**/*.ts"]
+  "include": ["vite.config.ts", "vitest.config.ts", "tests/**/*.{ts,tsx}"]
 }

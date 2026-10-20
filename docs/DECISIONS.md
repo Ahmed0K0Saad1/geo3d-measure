@@ -227,6 +227,17 @@
 - **الأثر:** `src/lib/dexie.ts` · `src/services/{sessionRepository,settingsRepository,exportFormat,exportService}.ts` · `src/store/{useSessionStore,useSettingsStore}.ts` · `src/features/sessions/*` · `src/features/settings/SettingsPanel.tsx` · `src/features/export/ExportPanel.tsx` · `src/core/coords/formatPoint.ts` · `src/core/units/areaConverters.ts` · `App/Sidebar/MapView` · `usePointsStore`/`useFlyTo` · `tsconfig.node.json` · `package.json` · i18n · اختبارات.
 - **التحقق (الجلسة 19):** المخطط الفعلي `sessions: 'id, updatedAt'` و`settings: 'key'`؛ سجل الجلسة `{ id, name, createdAt, updatedAt, version: 1, points, polygon: { vertices, closed }, settings }`؛ سجل الإعدادات `{ key: 'app', distanceUnit, areaUnit, coordinateFormat, lastSessionId, updatedAt }`. auto-save 800ms بعد أول حفظ صريح، واستعادة آخر جلسة مع `frameAll`. التصدير: GeoJSON `[lon,lat]` وحلقة مغلقة، KML مع `clampToGround` لغياب الارتفاع و`absolute` عند وجوده، CSV RFC 4180 + BOM عند التنزيل. 190/190 اختبارًا وبناء ناجح.
 
+## ADR-036 — بوابة الإتاحة: axe-core في jsdom + فحص يدوي للتباين والخريطة ✅ (2026-10-21 — T7.1)
+- **السياق:** NFR-7 يطلب تباينًا مقبولًا ودعم RTL/LTR، وP7 تحتاج بوابة إتاحة قابلة للتكرار. لا توجد اختبارات DOM سابقة، وVitest يعمل في Node فقط. اختبار `expect(true)` لا يثبت شيئًا.
+- **القرار:**
+  1. اختبار إتاحة حقيقي بـ`axe-core` داخل `jsdom` عبر `@testing-library/react`، على وسوم WCAG A/AA (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`).
+  2. نطاق الاختبار: `Header + Sidebar` (بلا Cesium) في AR/RTL وEN/LTR، مع نقاط ومضلع لتفعيل الجداول والنماذج. تُهيأ i18n و`fake-indexeddb` في الملف.
+  3. `color-contrast` معطّلة في jsdom لغياب محرك التخطيط/الرسم؛ تُفحص يدويًا في T7.3 وA-11. خريطة Cesium كذلك (WebGL غير متاح في jsdom).
+  4. `tsconfig.node.json` يصبح `strict` + `jsx: react-jsx` + شمول `.tsx`؛ Vitest يشمل `.test.{ts,tsx}` ويضيف تغطية v8 بلا عتبات مبدئية.
+- **البدائل المرفوضة:** اختبار placeholder (`expect(true)`) · Playwright الآن (تنزيل متصفح ثقيل وإضافة طبقة E2E كاملة قبل الحاجة) · اختبار Cesium/التباين في jsdom (نتائج مضللة) · تعطيل axe كليًا عند أول انتهاك (أُصلح الانتهاك فعليًا).
+- **الأثر:** `tests/accessibility.test.tsx` · `tests/e2e/manual-scenarios.md` · `vitest.config.ts` · `tsconfig.node.json` · `package.json` · إصلاح `ResultsPanel`/`ar.json`/`en.json` ليطابق `aria-label` النص المرئي (WCAG 2.5.3).
+- **التحقق (الجلسة 20):** 192/192 · axe أخضر في الحالتين · تغطية 55.85% statements · lint/format/build خضراء.
+
 ---
 
 ## قالب قرار جديد (انسخه عند الحاجة)

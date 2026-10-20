@@ -199,14 +199,38 @@
 
 ---
 
-## P7 — الجودة والإطلاق (تُفصَّل كاملة وتُعتمد قبل البدء)
-- [ ] **T7.1 — مراجعة تغطية الاختبارات + سيناريوهات E2E يدوية** `M`
-- [ ] **T7.2 — الأداء: تقسيم الحزم + زمن الإقلاع** `M`
-- [ ] **T7.3 — موبايل + RTL/LTR polish + إتاحة أساسية** `M`
-- [ ] **T7.4 — دليل استخدام (AR/EN) + توثيق النشر** `S`
-- [ ] **T7.5 — نشر تجريبي (HTTPS إلزامي لـGPS)** `S`
+## P7 — الجودة والإطلاق (فُصِّلت واعتُمدت — 2026-10-21، الجلسة 20)
+> هدف المرحلة: v1.0 على HTTPS + بوابة جودة موثقة + توثيق كامل. القرارات: ADR-036 (الإتاحة) · ADR-037 (الأداء) · ADR-038 (النشر) تُسجَّل عند تنفيذها.
 
-**DoD المرحلة:** v1.0 جاهزة/منشورة + التوثيق مكتمل.
+- [x] **T7.1 — بوابة الجودة والإتاحة (axe-core + WCAG AA + E2E يدوي)** `M` ☑
+  1. devDeps: `axe-core@4.14` · `jsdom@29.1` (متوافق Node 24.14) · `@testing-library/react@16.3` · `@testing-library/dom` · `@vitest/coverage-v8@5.0.5`.
+  2. `vitest.config.ts`: شمول `tests/**/*.test.{ts,tsx}` + تغطية v8 بلا عتبات مبدئية. `tsconfig.node.json`: `strict` + `jsx: react-jsx` + شمول `.tsx`.
+  3. `tests/accessibility.test.tsx`: jsdom + `fake-indexeddb` + axe على وسوم WCAG A/AA للهيكل (Header + Sidebar) في AR/RTL وEN/LTR مع نقاط ومضلع. `color-contrast` معطّل في jsdom (لا محرك تخطيط) ويُغطى يدويًا.
+  4. `tests/e2e/manual-scenarios.md`: 12 سيناريو يغطي A-2..A-11 + الموبايل + الفشل الشبكي + HTTPS/GPS.
+  5. إصلاح اكتشفه axe: `aria-label` لأزرار المقاطع أصبح يطابق النص المرئي (WCAG 2.5.3).
+  - القبول: **192/192** · axe بلا انتهاكات A/AA · تغطية 55.85% · lint/format/build خضراء.
+- [ ] **T7.2 — الأداء: تقسيم الحزم + زمن الإقلاع** `M`
+  1. `vite.config.ts`: `build.rolldownOptions.output.codeSplitting.groups` (Vite 8/Rolldown) لمجموعات cesium/react/i18n/vendor — **لا** صيغة `manualChunks` الكائنية غير المدعومة.
+  2. `MapView` عبر `lazy()` + `Suspense` مع `MapLoading` ورسالة i18n و`role="status"`؛ Cesium لا يُحمَّل مع هيكل الدخول.
+  3. قياس أحجام entry/Cesium/vendor بعد البناء وتسجيلها.
+  - القبول: chunk Cesium منفصل وكسول · entry + الحزم الثابتة < 300KB gzip · إجمالي أولي < 2MB · بناء ناجح.
+- [ ] **T7.3 — موبايل + RTL/LTR polish + إتاحة أساسية** `M`
+  1. `index.css`: `100dvh` مع fallback · breakpoint 768px · تخطيط عمودي (خريطة 50dvh ثم الشريط) · التفاف الهيدر · قائمة طبقات بعرض `min(280px, calc(100vw - 24px))` · أهداف لمس ≥ 44px · `:focus-visible` موحّد.
+  2. تدقيق تباين كل أزواج النصوص وتعديل ما يقل عن 4.5:1.
+  3. `MapView`: `role="region"` + `aria-label` مترجم + بديل لوحة المفاتيح موثق (الإدخال اليدوي).
+  4. فحص Tab/Shift+Tab/Enter/Space/Escape وRTL/LTR على 360×640 · 390×844 · 768×1024 · 1280×800.
+  - القبول: لا تمرير أفقي · تباين AA · لوحة مفاتيح كاملة · RTL/LTR سليمان بلا أخطاء Console.
+- [ ] **T7.4 — دليل استخدام (AR/EN) + توثيق النشر** `S`
+  1. `docs/USER_GUIDE.md` (عربي كامل + English Quick Guide) · `docs/DEPLOYMENT.md` (Vercel أساسي + Nginx بديل) · `docs/PRE_LAUNCH_CHECKLIST.md` (آلي + A-2..A-11 + أمان + أداء).
+  2. تحديث `README.md` إلى v1.0 · `ARCHITECTURE.md` (حالة المكتبات) · `.env.example` (تنبيه أن `VITE_*` مكشوفة) · `package.json` → `1.0.0`.
+  - القبول: لا حالة قديمة (P1/«مقترح») · دليل قابل للتنفيذ · قائمة فحص موقّعة.
+- [ ] **T7.5 — نشر تجريبي على Vercel (HTTPS إلزامي لـGPS)** `S`
+  1. `vercel.json`: بناء `dist` + رؤوس أمان + `Permissions-Policy: geolocation=(self)` + كاش للأصول (بلا rewrite عام؛ التطبيق بلا Router).
+  2. نشر عبر حساب المالك + متغير `VITE_CESIUM_ION_TOKEN` + تقييد التوكن بالنطاق.
+  3. تحقق حي: HTTPS · GPS على هاتف · Esri/ion · التصدير · الجلسات · بلا أخطاء Console.
+  - القبول: رابط HTTPS حي + `npm audit --omit=dev` نظيف + وسم `v1.0.0` بعد توقيع المالك. إن تعذّر وصول النشر: تُسلَّم «جاهزة للنشر» بخطوات موثقة ولا يُعلن «منشورة».
+
+**DoD المرحلة:** v1.0 جاهزة/منشورة على HTTPS + التوثيق مكتمل + بوابة الإتاحة والأداء خضراء + قائمة ما قبل الإطلاق موقّعة.
 
 ---
 
