@@ -4,11 +4,11 @@
 
 | البند | القيمة |
 |---|---|
-| آخر تحديث | 2026-10-21 — الجلسة 21 |
-| المرحلة الحالية | **P7 — الجودة والإطلاق** (T7.1–T7.2 مكتملتان — T7.3 التالية) |
-| حالة المرحلة | ⏳ T7.1–T7.2 ✅ (192/192) — T7.3–T7.5 قيد التنفيذ |
-| المهمة الجارية الآن | **T7.3 — موبايل + RTL/LTR + إتاحة أساسية** |
-| المهمة التالية | **T7.3 ثم T7.4 → T7.5 (Vercel)** |
+| آخر تحديث | 2026-10-21 — الجلسة 22 |
+| المرحلة الحالية | **P7 — الجودة والإطلاق** (T7.1–T7.3 مكتملة — T7.4 التالية) |
+| حالة المرحلة | ⏳ T7.1–T7.3 ✅ (192/192) — T7.4–T7.5 قيد التنفيذ |
+| المهمة الجارية الآن | **T7.4 — دليل الاستخدام وتوثيق النشر** |
+| المهمة التالية | **T7.4 ثم T7.5 (Vercel)** |
 | إعاقات تقنية | لا يوجد |
 
 ## بنود معلّقة على المالك (Action Items)
@@ -40,6 +40,15 @@
 | OQ-3 | إضافة هامش دقة GPS إلى نموذج GeoPoint (مطلوب لـFR-1) | مغلق — أُضيف `accuracy` في T2.2 (ADR-025) |
 
 ## سجل الجلسات (الأحدث أولًا)
+### الجلسة 22 — 2026-10-21 — P7/T7.3: الموبايل وRTL/LTR والإتاحة الأساسية
+- جديد: مفاتيح `map.regionLabel`/`map.keyboardHint` (ar/en) · `MapView` كـ`region` مع `aria-label` مترجم و`aria-describedby` لتلميح لوحة المفاتيح · `.visually-hidden` و`:focus-visible` موحّدان · breakpoint 768px وتخطيط عمودي (الخريطة 50dvh أولًا ثم الشريط) · `100dvh` مع fallback · أهداف لمس 40px (44px لزر الطبقات) · تغميق النصوص الثانوية `#667485` → `#5b6878` (≈5.5:1).
+- إصلاح اكتُشف بالقياس: قاعدة الوضع الأفقي القصير كانت تضبط `height:60dvh` حتى في تخطيط الصف عند 844px فتترك فراغًا أسفل الخريطة؛ قُصرت على `max-width:768px`.
+- تحقق CDP (AR/RTL وEN/LTR) على 360×640 · 390×844 · 844×390 · 768×1024 · 1280×800: `docScrollWidth == innerWidth` (لا تمرير أفقي) · الخريطة تملأ الارتفاع · الهيدر والشريط ينقلبان سليمين. العنصر المتجاوز الوحيد هو `.visually-hidden` المتعمد.
+- تحقق لوحة المفاتيح: Enter يفتح قائمة الطبقات وEscape يغلقها ويعيد التركيز · Space يدخل وضع النقر وEscape يخرج · Enter يبدأ رسم المضلع وEscape يلغي.
+- تحقق آلي: lint نظيف · format:check نظيف · test **192/192** · build ناجح (1933 وحدة) · الحزمة الأولية ≈**215.9KB gzip** (entry 21.0 + react 68.3 + i18n 16.2 + vendor 110.0 + runtime 0.6) · Cesium **1118.6KB gzip** كسول · MapView 4.6KB gzip.
+- **T7.3 مكتملة** — التالية T7.4 (دليل الاستخدام وتوثيق النشر). لا ADR جديد (تطبيق تفصيل T7.3 المعتمد).
+- الالتزام: `feat(ui): add responsive layout and accessibility polish (T7.3)`.
+
 ### الجلسة 21 — 2026-10-21 — P7/T7.2: تقسيم الحزم وتحميل Cesium كسولًا
 - جديد: `src/features/map/layerState.ts` (LayerState + DEFAULT_LAYER_STATE بلا Cesium) · `src/features/map/MapLoading.tsx` (شاشة انتظار `role="status"` + spinner يحترم reduced-motion).
 - تعديلات: `vite.config.ts` (`build.rolldownOptions.output.codeSplitting.groups`: cesium/react/i18n/vendor) · `App.tsx` (`lazy()` + `Suspense`) · `MapView`/`LayerSelector`/`useCesiumViewer` (استيراد layerState) · i18n `map.loading` · CSS.

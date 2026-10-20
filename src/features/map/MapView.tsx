@@ -1,4 +1,5 @@
-import { useRef } from 'react'
+import { useId, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useCesiumViewer } from './useCesiumViewer'
 import type { LayerState } from './layerState'
 import { useFlyTo, type FlyToRequest } from './useFlyTo'
@@ -28,6 +29,8 @@ export function MapView({
   onPolygonModeEnd,
   flyToRequest,
 }: MapViewProps) {
+  const { t } = useTranslation()
+  const keyboardHintId = useId()
   const containerRef = useRef<HTMLDivElement>(null)
   const viewer = useCesiumViewer(containerRef, layerState)
   const hovered = usePointHover(viewer)
@@ -46,7 +49,13 @@ export function MapView({
       className={
         isClickMode || isPolygonMode ? 'map-view map-view--drawing' : 'map-view'
       }
+      role="region"
+      aria-label={t('map.regionLabel')}
+      aria-describedby={keyboardHintId}
     >
+      <p id={keyboardHintId} className="visually-hidden">
+        {t('map.keyboardHint')}
+      </p>
       <div ref={containerRef} className="map-view__canvas" />
       {hovered && <PointTooltip hovered={hovered} />}
     </div>

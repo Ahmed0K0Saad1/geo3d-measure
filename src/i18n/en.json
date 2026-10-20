@@ -6,7 +6,9 @@
     "language": "Language"
   },
   "map": {
-    "loading": "Loading the globe…"
+    "loading": "Loading the globe…",
+    "regionLabel": "3D globe",
+    "keyboardHint": "To add a point with the keyboard, use manual input in the sidebar."
   },
   "layers": {
     "title": "Layers",

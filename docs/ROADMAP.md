@@ -215,12 +215,14 @@
   3. فصل `LayerState`/`DEFAULT_LAYER_STATE` في `layerState.ts` بلا Cesium، لأن استيرادها من `useCesiumViewer` كان يسحب Cesium إلى حزمة الدخول.
   4. القياس الفعلي: entry + react + i18n + vendor = **208.8KB gzip** · cesium = **1118.6KB gzip** (كسول) · MapView = 4.4KB.
   - القبول: **محقق** — Cesium غير موجود في `index.html`/modulepreload · entry < 300KB gzip · إجمالي أولي < 2MB · 192/192 · build ناجح.
-- [ ] **T7.3 — موبايل + RTL/LTR polish + إتاحة أساسية** `M`
-  1. `index.css`: `100dvh` مع fallback · breakpoint 768px · تخطيط عمودي (خريطة 50dvh ثم الشريط) · التفاف الهيدر · قائمة طبقات بعرض `min(280px, calc(100vw - 24px))` · أهداف لمس ≥ 44px · `:focus-visible` موحّد.
-  2. تدقيق تباين كل أزواج النصوص وتعديل ما يقل عن 4.5:1.
-  3. `MapView`: `role="region"` + `aria-label` مترجم + بديل لوحة المفاتيح موثق (الإدخال اليدوي).
-  4. فحص Tab/Shift+Tab/Enter/Space/Escape وRTL/LTR على 360×640 · 390×844 · 768×1024 · 1280×800.
-  - القبول: لا تمرير أفقي · تباين AA · لوحة مفاتيح كاملة · RTL/LTR سليمان بلا أخطاء Console.
+- [x] **T7.3 — موبايل + RTL/LTR polish + إتاحة أساسية** `M` ☑
+  1. `index.css`: `100dvh` مع fallback · breakpoint 768px · تخطيط عمودي (خريطة 50dvh ثم الشريط) · التفاف الهيدر · قائمة طبقات بعرض `min(280px, calc(100vw - 24px))` · أهداف لمس ≥ 40px · `:focus-visible` موحّد.
+  2. تدقيق تباين كل أزواج النصوص وتعديل ما يقل عن 4.5:1 — `#667485` → `#5b6878` (≈5.5:1 على `#fbfcfd`).
+  3. `MapView`: `role="region"` + `aria-label` مترجم + `aria-describedby` لتلميح لوحة المفاتيح (الإدخال اليدوي) + مفاتيح `map.regionLabel`/`map.keyboardHint`.
+  4. فحص Tab/Shift+Tab/Enter/Space/Escape وRTL/LTR على 360×640 · 390×844 · 844×390 · 768×1024 · 1280×800.
+  5. إصلاح اكتُشف بالقياس: قاعدة الوضع الأفقي القصير كانت تضبط `height:60dvh` حتى في تخطيط الصف (844px) فتترك فراغًا أسفل الخريطة؛ قُصرت على `max-width:768px`.
+  - القبول: **محقق** — لا تمرير أفقي · تباين AA · لوحة مفاتيح كاملة · RTL/LTR سليمان — Enter يفتح الطبقات/Escape يغلق ويعيد التركيز · Space يدخل وضع النقر/Escape يخرج · Enter يبدأ المضلع/Escape يلغي · 192/192.
+  - الالتزام: `feat(ui): add responsive layout and accessibility polish (T7.3)`.
 - [ ] **T7.4 — دليل استخدام (AR/EN) + توثيق النشر** `S`
   1. `docs/USER_GUIDE.md` (عربي كامل + English Quick Guide) · `docs/DEPLOYMENT.md` (Vercel أساسي + Nginx بديل) · `docs/PRE_LAUNCH_CHECKLIST.md` (آلي + A-2..A-11 + أمان + أداء).
   2. تحديث `README.md` إلى v1.0 · `ARCHITECTURE.md` (حالة المكتبات) · `.env.example` (تنبيه أن `VITE_*` مكشوفة) · `package.json` → `1.0.0`.

@@ -19,6 +19,24 @@ body,
 body {
   margin: 0;
   background: #eef1f5;
+  overflow-x: hidden;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+:focus-visible {
+  outline: 2px solid #1f6feb;
+  outline-offset: 2px;
 }
 
 /* ===== هيكل التطبيق: Header + (Sidebar | Map) — T1.6 ===== */
@@ -27,6 +45,7 @@ body {
   display: flex;
   flex-direction: column;
   height: 100%;
+  height: 100dvh;
 }
 
 .app-header {
@@ -109,7 +128,7 @@ body {
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.04em;
-  color: #667485;
+  color: #5b6878;
   text-transform: uppercase;
 }
 
@@ -227,7 +246,7 @@ body {
 
 .points-item__coords {
   font-size: 10px;
-  color: #667485;
+  color: #5b6878;
 }
 
 .points-item__actions {
@@ -328,7 +347,7 @@ body {
 .results-table thead th {
   font-size: 9px;
   font-weight: 600;
-  color: #667485;
+  color: #5b6878;
   vertical-align: bottom;
 }
 
@@ -346,7 +365,7 @@ body {
 
 .results-table tbody th {
   font-weight: 600;
-  color: #667485;
+  color: #5b6878;
 }
 
 .results-num {
@@ -356,7 +375,7 @@ body {
 
 .results-unit-label {
   font-size: 9px;
-  color: #667485;
+  color: #5b6878;
 }
 
 .results-segment {
@@ -394,7 +413,7 @@ body {
 .results-method {
   margin: 0;
   font-size: 10px;
-  color: #667485;
+  color: #5b6878;
 }
 
 /* ===== المضلع والمساحة — T5 ===== */
@@ -455,7 +474,7 @@ body {
   flex-direction: column;
   gap: 2px;
   font-size: 10px;
-  color: #667485;
+  color: #5b6878;
 }
 
 .area-unit-field select {
@@ -482,7 +501,7 @@ body {
   margin: 0 0 2px;
   font-size: 10px;
   font-weight: 600;
-  color: #667485;
+  color: #5b6878;
 }
 
 .area-value {
@@ -497,14 +516,14 @@ body {
 .area-unit-label {
   font-size: 10px;
   font-weight: 500;
-  color: #667485;
+  color: #5b6878;
 }
 
 .area-method,
 .area-unavailable {
   margin: 2px 0 0;
   font-size: 10px;
-  color: #667485;
+  color: #5b6878;
 }
 
 .area-unavailable {
@@ -536,7 +555,7 @@ body {
   margin: 0;
   font-size: 10px;
   line-height: 1.6;
-  color: #667485;
+  color: #5b6878;
 }
 
 .area-warnings {
@@ -581,7 +600,7 @@ body {
 .session-status {
   margin: 0;
   font-size: 11px;
-  color: #667485;
+  color: #5b6878;
 }
 
 .session-status--error {
@@ -634,7 +653,7 @@ body {
 
 .session-item__meta {
   font-size: 10px;
-  color: #667485;
+  color: #5b6878;
 }
 
 .session-current-badge {
@@ -658,7 +677,7 @@ body {
   flex-direction: column;
   gap: 2px;
   font-size: 10px;
-  color: #667485;
+  color: #5b6878;
 }
 
 .settings-field input,
@@ -726,13 +745,13 @@ body {
 
 .geocoding-result__coords {
   font-size: 11px;
-  color: #667485;
+  color: #5b6878;
 }
 
 .geocoding-attribution {
   margin: 0;
   font-size: 10px;
-  color: #667485;
+  color: #5b6878;
 }
 
 .geocoding-attribution a {
@@ -828,7 +847,7 @@ body {
 
 .manual-preview-row dt {
   flex: 0 0 34px;
-  color: #667485;
+  color: #5b6878;
 }
 
 .manual-preview-row dd {
@@ -941,7 +960,7 @@ body {
 .point-tooltip__coords {
   font-size: 10px;
   line-height: 1.4;
-  color: #667485;
+  color: #5b6878;
   overflow-wrap: anywhere;
 }
 
@@ -991,7 +1010,7 @@ body {
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.02em;
-  color: #667485;
+  color: #5b6878;
 }
 
 .layer-menu-heading:not(:first-child) {
@@ -1020,4 +1039,122 @@ body {
   margin: 0;
   accent-color: #1f6feb;
   cursor: pointer;
+}
+
+/* ===== الموبايل والتخطيط المتكيف — T7.3 ===== */
+
+@media (max-width: 768px) {
+  .app-header {
+    flex-wrap: wrap;
+    gap: 8px;
+    min-height: 0;
+    padding: 8px 12px;
+  }
+
+  .app-title {
+    font-size: 16px;
+  }
+
+  .app-header-controls {
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-inline-start: auto;
+  }
+
+  .app-body {
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  .map-view,
+  .map-loading {
+    flex: none;
+    order: -1;
+    width: 100%;
+    height: 50dvh;
+    min-height: 280px;
+  }
+
+  .app-sidebar {
+    width: 100%;
+    max-height: none;
+    padding: 10px;
+    overflow: visible;
+    border-inline-end: 0;
+    border-block-start: 1px solid #d7dce3;
+  }
+
+  .layer-menu {
+    width: min(280px, calc(100vw - 24px));
+    min-width: 0;
+  }
+
+  .sidebar-title,
+  .points-subtitle {
+    font-size: 14px;
+  }
+
+  .results-table {
+    font-size: 11px;
+  }
+
+  .results-table thead th {
+    font-size: 10px;
+  }
+
+  .results-unit-label,
+  .results-method,
+  .area-method,
+  .area-unavailable,
+  .area-explanation,
+  .geocoding-attribution,
+  .points-item__coords {
+    font-size: 11px;
+  }
+
+  .area-value {
+    font-size: 18px;
+  }
+
+  .point-tooltip {
+    width: min(220px, calc(100vw - 24px));
+  }
+}
+
+@media (max-width: 768px) and (max-height: 520px) and (orientation: landscape) {
+  .map-view,
+  .map-loading {
+    height: 60dvh;
+    min-height: 220px;
+  }
+}
+
+/* أهداف لمس مريحة على الأجهزة اللمسية — WCAG 2.5.8 */
+@media (pointer: coarse) {
+  .language-button,
+  .sidebar-tool,
+  .points-action,
+  .results-unit-button,
+  .results-segment,
+  .manual-mode {
+    min-height: 40px;
+  }
+
+  .layer-selector-button {
+    width: 44px;
+    height: 44px;
+  }
+
+  .points-action,
+  .results-segment {
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+
+  .manual-field input,
+  .manual-field select,
+  .settings-field input,
+  .settings-field select {
+    min-height: 40px;
+  }
 }
