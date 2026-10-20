@@ -103,7 +103,10 @@ interface SegmentResult {
 ## 5) تكامل Cesium
 - `useCesiumViewer(container, layerState)`: يدير دورة الحياة (إنشاء/تدمير العارض) ويطبّق حالة الطبقات — بلا إعادة إنشاء العارض.
 - مزامنة الكيانات: effect مركزي يقرأ الـStore ويحدّث EntityCollection (نقاط/خطوط/مضلع) — بدون إعادة إنشاء العارض.
-- التركيز على نقطة: `PointsPanel` لا يلمس Cesium؛ يرفع `FlyToRequest` إلى `App` ويستهلكه `useFlyTo` داخل `MapView` (ADR-030).
+- التركيز على نقطة: `PointsPanel` لا يلمس Cesium؛ يرفع `FlyToRequest` إلى `App` ويستهلكه `useFlyTo` داخل `MapView` (ADR-030). في P4 يكتشف `useFlyTo` النقطة المضافة بمقارنة المعرّفات ويؤطّرها مع السابقة تلقائيًا (ADR-033).
+- النقاط (T4.1): `usePointEntities` يرسم `Billboard` من SVG Data URI (`pinImage.ts`) بلون ورقم؛ النقاط بلا ارتفاع تُثبَّت على التضاريس، والتلميح عبر `usePointHover` + `PointTooltip` (HTML overlay) لا عبر `Entity.description`.
+- المسار (T4.2): `usePathEntities` يرسم `Polyline` جيوديسية مثبَّتة على الأرض لكل مقطع؛ المقطع المحدد (`selectedSegmentIndex`) أحمر والبقية زرقاء.
+- النتائج (T4.3): `ResultsPanel` يحسب `computePath` في الواجهة ويعرض المقاطع والاتجاهين والإجمالي واسم المنهجية، مع تبديل الوحدات (م/كم/nm).
 - التضاريس من Cesium ion عبر `VITE_CESIUM_ION_TOKEN`؛ خريطة أساس واحدة من ثلاث Esri (World Imagery / Street Map / Topo Map — بلا مفتاح، ADR-020/022)؛ تسميات شفافة اختيارية من Esri World_Boundaries_and_Places فوقها (ADR-021).
 - مبدّل الطبقات المخصص `LayerSelector` (الشريط العلوي): اختيار خريطة الأساس (radio) + إظهار/إخفاء التسميات والتضاريس (checkbox)؛ الحالة في React ويطبّقها `useCesiumViewer` (تبديل متزامن + كاش تضاريس + `errorEvent` لكل طبقة). مصادر الطبقات مركزية في `features/map/layerSources.ts` (ADR-022).
 - رسم المسار: Polyline (يتبع سطح الأرض بسلوك Cesium الافتراضي للخطوط الجيوديسية).

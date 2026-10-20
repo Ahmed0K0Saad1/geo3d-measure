@@ -25,7 +25,11 @@ function currentIds(): string[] {
 }
 
 beforeEach(() => {
-  usePointsStore.setState({ points: [], selectedPointId: null })
+  usePointsStore.setState({
+    points: [],
+    selectedPointId: null,
+    selectedSegmentIndex: null,
+  })
 })
 
 describe('مخزن النقاط (usePointsStore)', () => {
@@ -104,5 +108,50 @@ describe('مخزن النقاط (usePointsStore)', () => {
 
     usePointsStore.getState().selectPoint(null)
     expect(usePointsStore.getState().selectedPointId).toBeNull()
+  })
+
+  it('selectSegment يعيّن فهرس المقطع ويُمسح بـnull (T4.2)', () => {
+    usePointsStore.getState().selectSegment(1)
+    expect(usePointsStore.getState().selectedSegmentIndex).toBe(1)
+
+    usePointsStore.getState().selectSegment(null)
+    expect(usePointsStore.getState().selectedSegmentIndex).toBeNull()
+  })
+
+  it('حذف نقطة يُبقي اختيار المقطع صالحًا أو يصفّره إن خرج عن النطاق', () => {
+    const pointA = buildPoint({ id: 'a' })
+    const pointB = buildPoint({ id: 'b' })
+    const pointC = buildPoint({ id: 'c' })
+    const pointD = buildPoint({ id: 'd' })
+    usePointsStore.setState({
+      points: [pointA, pointB, pointC, pointD],
+      selectedSegmentIndex: 1,
+    })
+
+    // حذف نقطة من نهاية المسار لا يغيّر فهارس المقاطع السابقة
+    usePointsStore.getState().removePoint('d')
+    expect(usePointsStore.getState().selectedSegmentIndex).toBe(1)
+
+    // يتبقى مقطع واحد فقط ← الفهرس 1 خارج النطاق
+    usePointsStore.getState().removePoint('a')
+    expect(usePointsStore.getState().selectedSegmentIndex).toBeNull()
+
+    // اختيار المقطع 0 ثم حذف نقطة من نقطتين ← لا مقاطع متبقية
+    usePointsStore.setState({ selectedSegmentIndex: 0 })
+    usePointsStore.getState().removePoint('b')
+    expect(usePointsStore.getState().selectedSegmentIndex).toBeNull()
+  })
+
+  it('إعادة الترتيب تصفّر اختيار المقطع لأن الفهارس تتغير', () => {
+    const pointA = buildPoint({ id: 'a' })
+    const pointB = buildPoint({ id: 'b' })
+    const pointC = buildPoint({ id: 'c' })
+    usePointsStore.setState({
+      points: [pointA, pointB, pointC],
+      selectedSegmentIndex: 0,
+    })
+
+    usePointsStore.getState().reorderPoints(['c', 'a', 'b'])
+    expect(usePointsStore.getState().selectedSegmentIndex).toBeNull()
   })
 })

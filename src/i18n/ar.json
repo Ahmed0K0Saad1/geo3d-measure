@@ -31,6 +31,28 @@
       "haversine": "Haversine — WGS84 كروي تقريبي"
     }
   },
+  "results": {
+    "title": "نتائج المسار",
+    "empty": "أضف نقطتين على الأقل لعرض المقاطع والمسافات.",
+    "unitsLabel": "وحدة المسافة",
+    "units": {
+      "m": "م",
+      "km": "كم",
+      "nm": "ميل بحري"
+    },
+    "caption": "مقاطع المسار ومسافاتها",
+    "columns": {
+      "index": "#",
+      "segment": "المقطع",
+      "distance": "المسافة",
+      "initialBearing": "اتجاه البداية",
+      "finalBearing": "اتجاه النهاية"
+    },
+    "segmentValue": "{{from}} → {{to}}",
+    "selectSegment": "تمييز المقطع {{number}} على الخريطة",
+    "total": "الإجمالي",
+    "method": "المنهجية: {{method}}"
+  },
   "points": {
     "title": "النقاط",
     "myLocation": "موقعي الحالي",

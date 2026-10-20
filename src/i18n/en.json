@@ -31,6 +31,28 @@
       "haversine": "Haversine — WGS84 spherical approximation"
     }
   },
+  "results": {
+    "title": "Path results",
+    "empty": "Add at least two points to see segments and distances.",
+    "unitsLabel": "Distance unit",
+    "units": {
+      "m": "m",
+      "km": "km",
+      "nm": "nmi"
+    },
+    "caption": "Path segments and distances",
+    "columns": {
+      "index": "#",
+      "segment": "Segment",
+      "distance": "Distance",
+      "initialBearing": "Start bearing",
+      "finalBearing": "End bearing"
+    },
+    "segmentValue": "{{from}} → {{to}}",
+    "selectSegment": "Highlight segment {{number}} on the globe",
+    "total": "Total",
+    "method": "Method: {{method}}"
+  },
   "points": {
     "title": "Points",
     "myLocation": "My current location",

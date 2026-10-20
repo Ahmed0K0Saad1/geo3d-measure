@@ -189,6 +189,18 @@
 - **البدائل المرفوضة:** تنفيذ Vincenty في v1 (غير مطلوب الآن) · حساب 3D chord (خارج نطاق v1) · تنسيق الوحدات بنصوص عربية داخل `core` (مخالفة ADR-004) · حدود اختبار فضفاضة بلا fixtures.
 - **الأثر:** `src/core/geo/{strategy,registry,haversine,path}.ts` · `src/core/units/converters.ts` · `tests/measure.test.ts` · `tests/units.test.ts` · `tests/fixtures/geodesic-reference.json` · مفتاح `measure.method.haversine` في `ar.json`/`en.json`. يُفعّل ADR-016 عمليًا.
 
+## ADR-033 — العرض البصري على الكرة: Pins + Polylines + ResultsPanel + Camera ✅ (2026-10-20 — P4)
+- **السياق:** P3 وفّرت محرك القياس النقي، لكن النقاط تُرسم كنقاط بسيطة بلا خطوط ولا لوحة نتائج. P4 تحوّل المحرك إلى تجربة مرئية. اعتمد المالك تفصيل T4.1–T4.4 (الجلسة 17)، وهذا القرار يثبّت التفاصيل التقنية والانحرافات عن المسودة.
+- **القرار:**
+  1. **T4.1:** دبابيس `Billboard` مولّدة كـSVG Data URI في `pinImage.ts` (بلا أصول خارجية) بألوان متناوبة ورقم؛ النقطة المختارة بحلقة بيضاء وتكبير. النقاط بلا `height` تُرسم بـ`HeightReference.CLAMP_TO_GROUND`، وبلا `disableDepthTestDistance: Infinity` حتى تُحجب خلف الكرة.
+  2. **التلميح:** لا يُستخدم `Entity.description` لأنه لا يظهر عند التمرير (InfoBox عند التحديد فقط)؛ بديله `usePointHover` (`MOUSE_MOVE` + `scene.pick`) + `PointTooltip` overlay داخل `MapView`، بلا Cesium في مكوّن الواجهة.
+  3. **T4.2:** `selectedSegmentIndex` في المخزن (الفهرس لا يكفي فيه `selectedPointId` لأن النقطة تلامس مقطعين) + `usePathEntities` يرسم `Polyline` لكل مقطع بـ`ArcType.GEODESIC` و`clampToGround: true`؛ المحدد أحمر عرض 5 وغيره أزرق عرض 3.
+  4. **T4.3:** `ResultsPanel` قسم مستقل في `Sidebar` (وليس داخل `PointsTools`)؛ يحسب `computePath` بـ`HaversineStrategy` ويعرض المقاطع والاتجاهين والإجمالي واسم المنهجية (FR-14)؛ زر وحدات (م/كم/nm، الافتراضي كم) والتنسيق في `resultsFormat.ts` النقي، والأرقام `dir="ltr"`. عُرِّض الشريط الجانبي إلى 320px لاستيعاب الجدول.
+  5. **T4.4:** `useFlyTo` يكتشف النقطة المضافة بمقارنة المعرّفات (يتجاهل التعديل/الحذف/الترتيب وأول تحميل) ويؤطّرها مع السابقة إن وُجدت: منتصف جغرافي مع معالجة خط التاريخ + ارتفاع `max(2000, المسافة×1.2)`؛ طلب القائمة يبقى كما هو بمدة 1.5s.
+- **تصحيحات على مسودة المالك:** رقم القرار 033 (التالية بعد 032) · `Entity.description` لا يحقق التلميح عند التمرير · لوحة النتائج خارج `PointsTools` · تحديد المقطع بفهرس مستقل · تأطير النقطة مع السابقة بدل ارتفاع ثابت 2 كم · إصلاح غياب ارتفاع النقاط تحت التضاريس.
+- **البدائل المرفوضة:** صور دبابيس ثنائية الأبعاد مرفقة (وزن وصيانة) · InfoBox المدمج (نقر لا تمرير) · تمييز المقطع من `selectedPointId` (التباس مقطعين) · `disableDepthTestDistance: Infinity` (إظهار ما خلف الكرة).
+- **الأثر:** `src/features/map/{pinImage,usePointHover,PointTooltip,pathGeometry,usePathEntities,usePointEntities,MapView,useFlyTo}.ts(x)` · `src/features/points/{ResultsPanel,resultsFormat}.tsx` · `src/store/usePointsStore.ts` · `src/components/Sidebar.tsx` · `src/index.css` · `ar.json`/`en.json` · اختبارات جديدة. `src/core/**` بلا تغيير.
+
 ---
 
 ## قالب قرار جديد (انسخه عند الحاجة)
