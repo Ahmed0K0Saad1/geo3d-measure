@@ -28,7 +28,58 @@
   },
   "measure": {
     "method": {
-      "haversine": "Haversine — WGS84 spherical approximation"
+      "haversine": "Haversine — WGS84 spherical approximation",
+      "geodesic": "GeographicLib PolygonArea — WGS84 (Karney)",
+      "utmShoelace": "UTM {{zone}}{{hemisphere}} + Shoelace"
+    }
+  },
+  "polygon": {
+    "title": "Polygon",
+    "start": "Draw polygon",
+    "resume": "Resume drawing",
+    "finish": "Finish drawing",
+    "undo": "Undo",
+    "clear": "Clear",
+    "vertices": "Vertices: {{count}}",
+    "hint": "Click the globe to add a vertex · click the first vertex to close · Esc to finish.",
+    "closedHint": "Polygon closed — area is shown below.",
+    "empty": "Draw a polygon with at least three vertices."
+  },
+  "area": {
+    "title": "Area",
+    "empty": "Draw a polygon with at least three vertices to see its area.",
+    "unitLabel": "Area unit",
+    "groups": {
+      "metric": "Metric",
+      "imperial": "Imperial"
+    },
+    "units": {
+      "m2": "m²",
+      "ha": "ha",
+      "km2": "km²",
+      "ft2": "ft²",
+      "acre": "acre",
+      "mi2": "mi²"
+    },
+    "geodesic": "Geodesic area",
+    "utm": "UTM + Shoelace area",
+    "status": {
+      "open": "Open — implicit closure",
+      "closed": "Closed"
+    },
+    "difference": {
+      "higher": "UTM is {{percent}}% higher than geodesic",
+      "lower": "UTM is {{percent}}% lower than geodesic",
+      "equal": "The two areas are nearly identical",
+      "absolute": "Absolute difference: {{area}} {{unit}}"
+    },
+    "utmUnavailable": "UTM is unavailable for this polygon.",
+    "explanation": "Geodesic area is the reference on the WGS84 ellipsoid. UTM area projects all vertices into one zone and applies Shoelace, so it is affected by projection distortion (especially far from the central meridian and across zones).",
+    "warnings": {
+      "multi-zone": "The polygon spans more than one UTM zone; area was computed in the centroid zone ({{zone}}{{hemisphere}}) and may be less accurate.",
+      "multi-hemisphere": "The polygon crosses the equator; UTM area was stopped because Northing differs between hemispheres.",
+      "antimeridian": "The polygon crosses the International Date Line; UTM area was stopped because the projection is unreliable.",
+      "outside-utm-range": "The polygon is outside the UTM range (−80° to 84°); only geodesic area is shown."
     }
   },
   "results": {

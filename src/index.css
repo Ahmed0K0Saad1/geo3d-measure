@@ -397,6 +397,167 @@ body {
   color: #667485;
 }
 
+/* ===== المضلع والمساحة — T5 ===== */
+
+.polygon-tools {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-bottom: 12px;
+  border-block-end: 1px solid #e5e9ef;
+}
+
+.polygon-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.polygon-count {
+  margin: 0;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: #46515f;
+}
+
+.area-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 12px;
+  border-block-end: 1px solid #e5e9ef;
+}
+
+.area-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.area-badge {
+  padding: 2px 7px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #92400e;
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-radius: 999px;
+}
+
+.area-badge--closed {
+  color: #065f46;
+  background: #ecfdf5;
+  border-color: #6ee7b7;
+}
+
+.area-unit-field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 10px;
+  color: #667485;
+}
+
+.area-unit-field select {
+  max-width: 100px;
+  padding: 2px 4px;
+  font: inherit;
+  font-size: 11px;
+}
+
+.area-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+}
+
+.area-card {
+  padding: 6px 8px;
+  background: #ffffff;
+  border: 1px solid #e1e6ed;
+  border-radius: 6px;
+}
+
+.area-card h3 {
+  margin: 0 0 2px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #667485;
+}
+
+.area-value {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #065f46;
+  white-space: nowrap;
+}
+
+.area-unit-label {
+  font-size: 10px;
+  font-weight: 500;
+  color: #667485;
+}
+
+.area-method,
+.area-unavailable {
+  margin: 2px 0 0;
+  font-size: 10px;
+  color: #667485;
+}
+
+.area-unavailable {
+  color: #b42318;
+}
+
+.area-difference {
+  padding: 6px 8px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 6px;
+}
+
+.area-difference__percent {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #166534;
+}
+
+.area-difference__absolute {
+  margin: 2px 0 0;
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  color: #46515f;
+}
+
+.area-explanation {
+  margin: 0;
+  font-size: 10px;
+  line-height: 1.6;
+  color: #667485;
+}
+
+.area-warnings {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.area-warning {
+  padding: 5px 7px;
+  font-size: 10px;
+  line-height: 1.5;
+  color: #92400e;
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-radius: 6px;
+}
+
 .geocoding {
   display: flex;
   flex-direction: column;
@@ -570,7 +731,7 @@ body {
   inset: 0;
 }
 
-.map-view--click canvas {
+.map-view--drawing canvas {
   cursor: crosshair;
 }
 

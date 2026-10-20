@@ -136,24 +136,66 @@
 
 ---
 
-## P5 — المضلع والمساحة (تُفصَّل كاملة وتُعتمد قبل البدء)
-- [ ] **T5.1 — وضع رسم مضلع (نقرات + إغلاق)** `M`
-- [ ] **T5.2 — المساحة الجيوديسية (GeographicLib PolygonArea)** `M`
-- [ ] **T5.3 — مساحة UTM + Shoelace مع تحذير تعدد مناطق UTM** `S`
-- [ ] **T5.4 — عرض المقارنة + شرح سبب الفرق** `S`
+## P5 — المضلع والمساحة (معتمدة — ADR-034)
+- [x] **T5.1 — وضع رسم مضلع (نقرات + معاينة + إغلاق)** `M`
+  1. `src/store/usePolygonStore.ts`: رؤوس `{ id, lat, lon, height? }` + حالة `idle/drawing/closed` + إضافة/تراجع/إغلاق/مسح/استبدال.
+  2. `src/features/map/usePolygonDraw.ts`: `LEFT_CLICK` عبر `pickGlobeCoordinates`، إغلاق بالنقر على الرأس الأول (16px) أو الزر، معاينة `MOUSE_MOVE`، و`Escape` (إغلاق عند ≥3 رؤوس وإلا إلغاء).
+  3. `src/features/map/usePolygonEntities.ts`: نقاط الرؤوس + خط خارجي `clampToGround` + تعبئة شفافة + خط معاينة متقطع.
+  4. `src/features/polygon/PolygonTools.tsx`: رسم/إنهاء/تراجع/مسح + عدد الرؤوس، وربطها بـ`App`/`MapView`/`Sidebar` مع منع تعارض وضع النقر.
+  5. مفاتيح `polygon.*` في `ar.json`/`en.json` + أنماط CSS.
+  - القبول: رسم 3+ رؤوس · معاينة لحظية · إغلاق صحيح · تراجع/مسح · لا نقطة مسار أثناء وضع المضلع · AR/EN · بلا أخطاء Console.
+- [x] **T5.2 — المساحة الجيوديسية (GeographicLib PolygonArea)** `M`
+  1. `src/core/geo/areaGeodesic.ts`: `Geodesic.WGS84.Polygon()` + `Compute(false, true)` ثم `Math.abs` (لأن `sign=false` تعيد المتممة عند عكس الاتجاه)؛ تعيد المساحة م² + المحيط + مفتاح المنهجية؛ `null` عند <3 نقاط؛ الارتفاع مهمَل.
+  2. `tests/fixtures/area-reference.json`: قيم من `pyproj 3.7.2 / PROJ 9.5.1` (Karney) + توثيق المصدر.
+  3. `tests/areaGeodesic.test.ts`: مربع الرياض · مثلث الرياض–جدة–الدمام · عبور خط التاريخ · اتجاه اللف · النقاط المكررة/المتدهورة.
+  - القبول: تطابق نسبي < `1e-6` مع المراجع · استقلال عن اتجاه اللف · اختبارات خضراء.
+- [x] **T5.3 — مساحة UTM + Shoelace مع تحذير النطاق** `M`
+  1. توسيع `src/core/coords/utm.ts` بـ`wgs84ToUtmInZone` (إسقاط خام في منطقة محددة، بلا تحقق Easting/Northing).
+  2. `src/core/geo/areaUtm.ts`: منطقة centroid + Shoelace + `Math.abs`؛ تحذير `multi-zone` مع الحساب في منطقة المركز؛ وإيقاف UTM مع سبب عند `multi-hemisphere`/`antimeridian`/الخروج من 80°S–84°N.
+  3. `tests/areaUtm.test.ts` + توسيع `tests/utm.test.ts` بقيم مرجعية.
+  - القبول: UTM قريب من الجيوديسية داخل منطقة واحدة ضمن تشوه الإسقاط · تحذير تعدد المناطق · لا رقم مضلل في الحالات الحدية.
+- [x] **T5.4 — عرض المقارنة + شرح الفرق** `S`
+  1. `src/core/units/unitTypes.ts` + `areaConverters.ts`: m²/ha/km²/ft²/acre/mi².
+  2. `src/features/polygon/areaFormat.ts`: تحويل/تنسيق/فرق موقّع + اختبارات.
+  3. `src/features/polygon/AreaComparison.tsx`: المساحتان + المنهجيتان + الفرق + الشرح + التحذيرات + تبديل الوحدات (الافتراضي هكتار).
+  4. دمج القسم في `Sidebar` + CSS + i18n.
+  - القبول: المساحتان والفرق والشرح والتحذيرات · AR/EN وRTL/LTR · الشريط 320px.
 
-**DoD المرحلة:** مساحتان ظاهرتان مع نسبة الاختلاف موضحة.
+**DoD المرحلة:** ✅ تقنيًا — مساحتان ظاهرتان مع نسبة الاختلاف موضحة (157 اختبارًا · build ناجح). الفحص البصري A-9 معلّق على المالك.
 
 ---
 
-## P6 — الحفظ والتصدير والإعدادات (تُفصَّل كاملة وتُعتمد قبل البدء)
+## P6 — الحفظ والتصدير والإعدادات (معتمدة — ADR-035)
 - [ ] **T6.1 — Repository + Dexie (مخطط v1) + اختبارات** `M`
+  1. `src/lib/dexie.ts`: قاعدة `geo3d-measure`، `sessions: 'id, updatedAt'` و`settings: 'key'`، مخطط v1.
+  2. `src/services/sessionRepository.ts` + `settingsRepository.ts`: CRUD + إعدادات + `lastSessionId` + أخطاء مرمزة + تحقق zod.
+  3. `fake-indexeddb` كـdevDependency + `"DOM"` في `tsconfig.node.json` للاختبارات.
+  4. اختبارات CRUD وإعادة فتح القاعدة والجلسة التالفة.
+  - القبول: كل اختبارات التخزين خضراء في Node.
 - [ ] **T6.2 — حفظ/فتح/حذف الجلسات + حفظ تلقائي** `M`
+  1. `src/store/useSessionStore.ts` + `sessionSnapshot.ts` + `useSessionPersistence.ts`.
+  2. `src/features/sessions/SessionManager.tsx`: اسم/حفظ/جلسة جديدة/فتح/حذف بخطوتين + حالة الحفظ.
+  3. Auto-save بعد أول حفظ صريح (debounce 800ms)، واستعادة آخر جلسة، وتأطير `frameAll` للبيانات المستعادة.
+  4. `replacePoints` في مخزن النقاط + إلغاء/تفريغ الحفظ المعلّق قبل تبديل الجلسة.
+  - القبول: حفظ → تعديل → استعادة بعد إعادة التحميل · فتح/حذف/جلسة جديدة · بلا تعارض عند التبديل السريع · AR/EN.
 - [ ] **T6.3 — تصدير GeoJSON / KML / CSV** `M`
-- [ ] **T6.4 — شاشة إعدادات (وحدات، صيغة إحداثيات، لغة، افتراضيات)** `M`
+  1. `src/services/exportFormat.ts` (نقي): GeoJSON RFC 7946 (Point + Polygon + إغلاق الحلقة) · KML (XML escaping + clampToGround) · CSV (RFC 4180 + BOM عند التنزيل).
+  2. `src/services/exportService.ts`: Blob/URL/anchor + أسماء ملفات آمنة.
+  3. `src/features/export/ExportPanel.tsx`: ثلاثة أزرار + تعطيل عند غياب البيانات.
+  4. اختبارات serializers والـescaping.
+  - القبول: الملفات الثلاثة صالحة في QGIS/Google Earth/Excel · العربية سليمة.
+- [ ] **T6.4 — الإعدادات (وحدات، صيغة إحداثيات، لغة)** `M`
+  1. `src/store/useSettingsStore.ts`: مسافة (m/km/mi/ft/nm) + مساحة (m²/ha/km²/ft²/acre/mi²) + صيغة (DD/DMS/UTM/MGRS) + الافتراضيات (km/ha/DD).
+  2. `src/features/settings/SettingsPanel.tsx` + ربط `ResultsPanel` و`AreaComparison`.
+  3. `src/core/coords/formatPoint.ts` وعرض الصيغة في `PointsPanel`/`PointTooltip` مع fallback إلى DMS.
+  4. حفظ الإعدادات في Dexie، واللغة تبقى في `localStorage`.
+  - القبول: التغيير ينعكس فورًا ويبقى بعد إعادة التحميل · AR/EN · بلا أخطاء Console.
 - [ ] **T6.5 — استكمال الترجمة 100% AR/EN** `S`
+  1. كل مفاتيح P5/P6 في `ar.json`/`en.json` + توسيع `tests/i18n.test.ts`.
+  2. مراجعة النصوص المضمّنة في JSX وإزالة المفاتيح غير المستخدمة.
+  3. مراجعة RTL/LTR للأرقام والإحداثيات وأزرار التصدير.
 
-**DoD المرحلة:** جلسة كاملة تُحفظ وتُستعاد بعد إعادة التحميل وتُصدَّر بالصيغ الثلاث.
+**DoD المرحلة:** جلسة كاملة تُحفظ وتُستعاد بعد إعادة التحميل وتُصدَّر بالصيغ الثلاث + فحص بصري A-10 (معلّق على المالك).
 
 ---
 

@@ -1,0 +1,56 @@
+{
+  "source": {
+    "library": "pyproj",
+    "version": "3.7.2",
+    "proj": "9.5.1",
+    "ellipsoid": "WGS84",
+    "method": "Geod.polygon_area_perimeter (Karney geodesic)"
+  },
+  "cases": {
+    "riyadhBox02": {
+      "lons": [46.6, 46.8, 46.8, 46.6],
+      "lats": [24.6, 24.6, 24.8, 24.8],
+      "areaSquareMeters": 448363292.32769775,
+      "perimeterMeters": 84784.84240544867
+    },
+    "riyadhBox01": {
+      "lons": [46.6, 46.7, 46.7, 46.6],
+      "lats": [24.6, 24.6, 24.7, 24.7],
+      "areaSquareMeters": 112134777.66199112,
+      "perimeterMeters": 42400.368872089195
+    },
+    "ksaTriangle": {
+      "lons": [46.6753, 39.1925, 50.0888],
+      "lats": [24.7136, 21.4858, 26.4207],
+      "areaSquareMeters": 17676052854.28479,
+      "perimeterMeters": 2473015.4180796114
+    },
+    "antimeridianBox": {
+      "lons": [179.8, -179.8, -179.8, 179.8],
+      "lats": [-0.1, -0.1, 0.1, 0.1],
+      "areaSquareMeters": 984729306.2783657,
+      "perimeterMeters": 133285.16868230174
+    },
+    "equatorBox": {
+      "lons": [30, 30.2, 30.2, 30],
+      "lats": [-0.1, -0.1, 0.1, 0.1],
+      "areaSquareMeters": 492363143.20411974,
+      "perimeterMeters": 88757.4397311653
+    },
+    "utmRiyadhBox01": {
+      "lons": [46.6, 46.7, 46.7, 46.6],
+      "lats": [24.6, 24.6, 24.7, 24.7],
+      "areaSquareMeters": 112122299.73474121,
+      "zone": 38,
+      "hemisphere": "N"
+    },
+    "riyadhZone37": {
+      "lat": 24.7136,
+      "lon": 46.6753,
+      "zone": 37,
+      "hemisphere": "N",
+      "easting": 1277820.526432381,
+      "northing": 2755104.8420955604
+    }
+  }
+}

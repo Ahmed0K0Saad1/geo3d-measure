@@ -14,6 +14,8 @@
   },
   "dependencies": {
     "cesium": "^1.146.0",
+    "dexie": "^4.4.6",
+    "geographiclib-geodesic": "^2.2.0",
     "i18next": "^26.5.2",
     "mgrs": "^2.2.0",
     "proj4": "^2.22.0",
@@ -28,6 +30,7 @@
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
     "@vitejs/plugin-react": "^6.1.1",
+    "fake-indexeddb": "^6.2.6",
     "oxlint": "^1.81.0",
     "prettier": "^3.9.10",
     "typescript": "~6.0.2",

@@ -92,9 +92,9 @@ interface SegmentResult {
 - **فصل المسؤوليات:** الاستراتيجية تتعامل مع الإحداثيات فقط؛ الوحدات تُدار خارجها في `units/`.
 
 ### 4.2 حساب المساحة
-- `areaGeodesic(points)`: عبر GeographicLib `PolygonArea` (دقة إهليلجية).
-- `areaUtm(points)`: إسقاط إلى UTM (منطقة تؤخذ من centroid) ثم Shoelace — مع تحذير عند امتداد المضلع لأكثر من منطقة UTM.
-- الواجهة تعرض القيمتين + الفرق النسبي مع شرح مبسط.
+- `areaGeodesic(points)`: عبر GeographicLib `PolygonArea` (دقة إهليلجية) و`Compute(false, true)` ثم `Math.abs` — التوقيع ضروري لأن `sign=false` تعيد متممة المساحة عند عكس اتجاه اللف (ADR-034). الارتفاع مهمَل والقياس على سطح WGS84.
+- `areaUtm(points)`: منطقة واحدة تؤخذ من centroid عبر `utmZoneFor`، ثم إسقاط كل الرؤوس بـ`wgs84ToUtmInZone` (بلا تحقق Easting/Northing) وShoelace. تحذير `multi-zone` عند الامتداد، وإيقاف UTM مع سبب عند خط التاريخ أو نصفَي الكرة أو خارج 80°S–84°N.
+- الواجهة (`AreaComparison`) تعرض القيمتين + الفرق الموقّع + شرح تشوه الإسقاط + التحذيرات، بوحدات m²/ha/km²/ft²/acre/mi² (الافتراضي هكتار).
 
 ### 4.3 سياسة الدقة المعروضة
 - كل نتيجة تحمل شارة المنهجية: "Haversine — WGS84 كروي تقريبي".
@@ -106,6 +106,7 @@ interface SegmentResult {
 - التركيز على نقطة: `PointsPanel` لا يلمس Cesium؛ يرفع `FlyToRequest` إلى `App` ويستهلكه `useFlyTo` داخل `MapView` (ADR-030). في P4 يكتشف `useFlyTo` النقطة المضافة بمقارنة المعرّفات ويؤطّرها مع السابقة تلقائيًا (ADR-033).
 - النقاط (T4.1): `usePointEntities` يرسم `Billboard` من SVG Data URI (`pinImage.ts`) بلون ورقم؛ النقاط بلا ارتفاع تُثبَّت على التضاريس، والتلميح عبر `usePointHover` + `PointTooltip` (HTML overlay) لا عبر `Entity.description`.
 - المسار (T4.2): `usePathEntities` يرسم `Polyline` جيوديسية مثبَّتة على الأرض لكل مقطع؛ المقطع المحدد (`selectedSegmentIndex`) أحمر والبقية زرقاء.
+- المضلع (T5.1): الحالة في `usePolygonStore` (`idle/drawing/closed` + رؤوس). `usePolygonDraw` يدير `LEFT_CLICK`/`MOUSE_MOVE` وEscape ويغلق بالنقر على الرأس الأول ضمن 16px أو بالزر؛ `usePolygonEntities` يرسم الرؤوس والخط المغلق والتعبئة وخط المعاينة المتقطع. وضع النقر ووضع المضلع متعارضان في `App`.
 - النتائج (T4.3): `ResultsPanel` يحسب `computePath` في الواجهة ويعرض المقاطع والاتجاهين والإجمالي واسم المنهجية، مع تبديل الوحدات (م/كم/nm).
 - التضاريس من Cesium ion عبر `VITE_CESIUM_ION_TOKEN`؛ خريطة أساس واحدة من ثلاث Esri (World Imagery / Street Map / Topo Map — بلا مفتاح، ADR-020/022)؛ تسميات شفافة اختيارية من Esri World_Boundaries_and_Places فوقها (ADR-021).
 - مبدّل الطبقات المخصص `LayerSelector` (الشريط العلوي): اختيار خريطة الأساس (radio) + إظهار/إخفاء التسميات والتضاريس (checkbox)؛ الحالة في React ويطبّقها `useCesiumViewer` (تبديل متزامن + كاش تضاريس + `errorEvent` لكل طبقة). مصادر الطبقات مركزية في `features/map/layerSources.ts` (ADR-022).

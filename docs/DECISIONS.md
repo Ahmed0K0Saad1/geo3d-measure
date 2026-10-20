@@ -55,8 +55,9 @@
 - **الحسم (T2.1):** `zustand@5.0.15`؛ أول مخزن `src/store/usePointsStore.ts` (points + selectedPointId)؛ يُختبر في Node بلا DOM عبر `getState()`؛ كيانات Cesium تُشتق منه عبر effect مركزي — بلا قراءة مباشرة من المخزن داخل Cesium (ARCHITECTURE §5).
 - **البدائل المرفوضة:** Context API (إعادة رسم أوسع وبلا selectors دقيقة) · Redux Toolkit (ثقل boilerplate بلا حاجة فعلية الآن).
 
-## ADR-013 — قاعدة IndexedDB: Dexie 🕓 (يُعتمد في P6)
-- **السبب المرجح:** API أنظف وإدارة إصدارات سكيمة أفضل من IndexedDB الخام أو LocalStorage.
+## ADR-013 — قاعدة IndexedDB: Dexie ✅ (اعتُمد فعليًا في P6 — 2026-10-20)
+- **السبب:** API أنظف وإدارة إصدارات سكيمة أفضل من IndexedDB الخام أو LocalStorage.
+- **التنفيذ:** `dexie@4.4.6` في `src/lib/dexie.ts` بمخطط v1 (`sessions: 'id, updatedAt'` · `settings: 'key'`)، خلف Repository في `src/services/sessionRepository.ts` و`src/services/settingsRepository.ts` (ADR-035).
 
 ## ADR-014 — مزود Geocoding: Nominatim، خلف واجهة قابلة للتبديل 🕓 (يُعتمد في P2)
 - **السبب:** مجاني بدون مفتاح. **القيود:** حد استخدام ← debounce + cache + إسناد OSM. بديل: Photon.
@@ -69,8 +70,9 @@
 - **القرار:** قيم مرجعية من GeographicLib 2.1 (WGS84) تُخزَّن JSON في `tests/fixtures`؛ اختبارات حدود نظرية للفرق الكروي/الإهليلجي (0.5%).
 - **التنفيذ:** `tests/fixtures/geodesic-reference.json` + `tests/measure.test.ts` (ADR-032).
 
-## ADR-017 — المساحة الجيوديسية: مكتبة GeographicLib (PolygonArea) 🕓 (يُعتمد في P5)
+## ADR-017 — المساحة الجيوديسية: مكتبة GeographicLib (PolygonArea) ✅ (اعتُمد فعليًا في P5 — 2026-10-20)
 - **السبب:** الدقة القياسية عالميًا (خوارزمية Karney) بدل تنفيذ ذاتي قابل للخطأ.
+- **التنفيذ:** `geographiclib-geodesic@2.2.0` (رخصة MIT، المنفذ الرسمي من GeographicLib) عبر `Geodesic.WGS84.Polygon()` و`Compute(false, true)` ثم `Math.abs` في `src/core/geo/areaGeodesic.ts` (ADR-034). تحقق P5 العملي أثبت أن `sign=false` تعيد متممة المساحة للمضلع المعاكس الاتجاه، لذا اعتُمد التوقيع + القيمة المطلقة.
 
 ## ADR-018 — دلالة القياس الأساسية: نقاط متعددة متسلسلة 🕓 (مبدئي — OQ-1)
 - **القرار المبدئي:** مسافة كل مقطع متتالٍ + الإجمالي + اتجاه لكل مقطع. يُعتمد نهائيًا بتأكيد المالك أو يُصحح بقرار جديد.
@@ -200,6 +202,29 @@
 - **تصحيحات على مسودة المالك:** رقم القرار 033 (التالية بعد 032) · `Entity.description` لا يحقق التلميح عند التمرير · لوحة النتائج خارج `PointsTools` · تحديد المقطع بفهرس مستقل · تأطير النقطة مع السابقة بدل ارتفاع ثابت 2 كم · إصلاح غياب ارتفاع النقاط تحت التضاريس.
 - **البدائل المرفوضة:** صور دبابيس ثنائية الأبعاد مرفقة (وزن وصيانة) · InfoBox المدمج (نقر لا تمرير) · تمييز المقطع من `selectedPointId` (التباس مقطعين) · `disableDepthTestDistance: Infinity` (إظهار ما خلف الكرة).
 - **الأثر:** `src/features/map/{pinImage,usePointHover,PointTooltip,pathGeometry,usePathEntities,usePointEntities,MapView,useFlyTo}.ts(x)` · `src/features/points/{ResultsPanel,resultsFormat}.tsx` · `src/store/usePointsStore.ts` · `src/components/Sidebar.tsx` · `src/index.css` · `ar.json`/`en.json` · اختبارات جديدة. `src/core/**` بلا تغيير.
+
+## ADR-034 — المضلع والمساحة: حالة مشتركة + مقارنة جيوديسية/UTM ✅ (2026-10-20 — P5)
+- **السياق:** FR-9 يفرض رسم مضلع وعرض مساحتين (GeographicLib وUTM+Shoelace) مع نسبة الفرق. مسودة المالك اقتصرت على `usePolygonDraw`، لكن المساحة والتصدير والجلسات تحتاج رؤوسًا مشتركة؛ كما أن `wgs84ToUtm` يستنتج منطقة لكل نقطة فلا يصلح لمساحة موحدة. REQUIREMENTS §4 يذكر «الدقة المساحية Vincenty/Karney» خارج النطاق، بينما FR-9 يفرضها؛ اعتُمد FR-9 (الأخص) وبقي تأجيل ترقية **محرك المسافات**.
+- **القرار:**
+  1. الحالة في `src/store/usePolygonStore.ts` (`idle/drawing/closed` + رؤوس)، والهوكان الملموسان لـCesium في `features/map` (`usePolygonDraw`/`usePolygonEntities`) التزامًا بـARCHITECTURE §5؛ واجهة `PolygonTools` و`AreaComparison` في `features/polygon`.
+  2. الإغلاق بالنقر على الرأس الأول (16px) أو زر الإغلاق عند ≥3 رؤوس؛ `Escape` يُغلق عند ≥3 وإلا يُلغي. المساحة تُعرض للمضلع المفتوح ضمنيًا مع شارة «مفتوح».
+  3. المساحة الجيوديسية: `Geodesic.WGS84.Polygon()` + `Compute(false, true)` ثم `Math.abs`، وإهمال الارتفاع (سطح الإهليلج WGS84). سبب اختيار `sign=true`: اختبار الاتجاه أثبت أن `sign=false` تعيد متممة المساحة عند لف الرؤوس عكسيًا. المراجع من `pyproj 3.7.2 / PROJ 9.5.1` (خوارزمية Karney) في `tests/fixtures/area-reference.json`.
+  4. مساحة UTM: منطقة centroid عبر `utmZoneFor`، وإسقاط موحد بـ`wgs84ToUtmInZone` جديد (بلا تحقق Easting/Northing)، ثم Shoelace. تعدد المناطق يُحسب مع تحذير؛ عبور خط التاريخ/نصف الكرة/الخروج من 80°S–84°N يوقف UTM مع سبب واضح بدل رقم مضلل.
+  5. الوحدات: m²/ha/km²/ft²/acre/mi²، الافتراضي هكتار. الفرق يُعرض موقّعًا (`UTM أعلى/أقل`) مع شرح تشوه الإسقاط و`0.9996`.
+- **البدائل المرفوضة:** `wgs84ToUtm` لكل رأس (اختلاط مناطق) · تنفيذ مساحة إهليلجية ذاتي · حساب UTM في الحالات الحدية رغم مضلليّته · عرض مساحة المضلع المفتوح كأنه مغلق بلا شارة.
+- **الأثر:** `src/core/geo/{areaGeodesic,areaUtm}.ts` · `src/core/coords/utm.ts` · `src/core/units/{unitTypes,areaConverters}.ts` · `src/store/usePolygonStore.ts` · `src/features/map/{usePolygonDraw,usePolygonEntities}.ts` · `src/features/polygon/{PolygonTools,AreaComparison,areaFormat}.tsx` · `App/MapView/Sidebar` · `index.css` · i18n · اختبارات وfixtures.
+
+## ADR-035 — الجلسات والتصدير والإعدادات: Dexie + لقطة جلسة + auto-save ✅ (2026-10-20 — P6)
+- **السياق:** FR-10/11 وNFR-3 تتطلبان تخزينًا محليًا خلف Repository، تصديرًا بثلاث صيغ، وإعدادات عرض. Dexie معتمد مبدأً (ADR-013)، لكن يلزم تثبيت المخطط وسياسة الحفظ والاستعادة، وفصل لغة الواجهة عن لقطة الجلسة لتجنب وميض/تبديل غير متوقع.
+- **القرار:**
+  1. قاعدة `geo3d-measure`، مخطط v1: `sessions { id, name, createdAt, updatedAt, version, points[], polygon, settings }` و`settings` مفتاح `app` (الوحدات، صيغة الإحداثيات، `lastSessionId`). Repository Pattern + تحقق zod + أخطاء مرمزة.
+  2. لقطة الجلسة تشمل النقاط والمضلع ووحدات العرض/صيغة الإحداثيات، **ولا** تشمل اللغة أو الكاميرا أو التحديدات. اللغة تبقى في `localStorage` للتهيئة الفورية؛ استعادة الكاميرا/`view` مؤجلة إلى P7.
+  3. أول حفظ صريح يُنشئ الجلسة؛ بعدها auto-save بعد 800ms من التغيير، بلا إنشاء جلسات من فراغ. تُستعاد آخر جلسة تلقائيًا، ويُفرَّغ الحفظ المعلّق قبل تبديل الجلسة.
+  4. تأطير البيانات المستعادة بـ`frameAll` (bbox مع معالجة خط التاريخ)، و`useFlyTo` يتجاهل الإضافة الجماعية لمنع طيرانين.
+  5. التصدير من الحالة الحالية: GeoJSON RFC 7946 (WGS84 `[lon,lat]` + Polygon مغلق)، KML (XML escaping + `clampToGround` عند غياب الارتفاع)، CSV (RFC 4180 + UTF-8 BOM عند التنزيل). المُسلسلات النقية منفصلة عن تنزيل المتصفح.
+  6. الإعدادات مركزية في `useSettingsStore`: مسافة m/km/mi/ft/nm، مساحة m²/ha/km²/ft²/acre/mi²، صيغة DD/DMS/UTM/MGRS (افتراضي km/ha/DD). تغيير الوحدة في اللوحة يحدّث الإعداد العام.
+- **البدائل المرفوضة:** LocalStorage للسجلات (سعة/بنية) · لغة الجلسة داخل Dexie (وميض وتبديل غير متوقع) · auto-create لكل تغيير (فوضى جلسات) · استعادة الكاميرا في P6 (خارج FR-11 وتعقيد bbox/orientation) · مكتبة تصدير خارجية (الصيغ مباشرة).
+- **الأثر:** `src/lib/dexie.ts` · `src/services/{sessionRepository,settingsRepository,exportFormat,exportService}.ts` · `src/store/{useSessionStore,useSettingsStore}.ts` · `src/features/sessions/*` · `src/features/settings/SettingsPanel.tsx` · `src/features/export/ExportPanel.tsx` · `src/core/coords/formatPoint.ts` · `src/core/units/areaConverters.ts` · `App/Sidebar/MapView` · `usePointsStore`/`useFlyTo` · `tsconfig.node.json` · `package.json` · i18n · اختبارات.
 
 ---
 

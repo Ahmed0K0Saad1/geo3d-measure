@@ -5,8 +5,10 @@ import {
   utmToWgs84,
   utmZoneFor,
   wgs84ToUtm,
+  wgs84ToUtmInZone,
   type UtmErrorCode,
 } from '../src/core/coords/utm.ts'
+import fixtures from './fixtures/area-reference.json' with { type: 'json' }
 
 function expectUtmError(run: () => unknown, code: UtmErrorCode): void {
   try {
@@ -68,6 +70,23 @@ describe('تحويلات UTM (WGS84 ↔ EPSG:326xx/327xx)', () => {
     )
     expect(southBack.lat).toBeCloseTo(-33.8688, 6)
     expect(southBack.lon).toBeCloseTo(151.2093, 6)
+  })
+
+  it('يسقط في منطقة محددة ويسمح بتجاوز حدود Easting للمناطق المجاورة', () => {
+    const reference = fixtures.cases.riyadhZone37
+    const result = wgs84ToUtmInZone(
+      reference.lat,
+      reference.lon,
+      reference.zone,
+      reference.hemisphere as 'N' | 'S',
+    )
+
+    expect(result.zone).toBe(37)
+    expect(result.easting).toBeGreaterThan(1_000_000)
+    expect(result.easting).toBeCloseTo(reference.easting, 3)
+    expect(result.northing).toBeCloseTo(reference.northing, 3)
+    expectUtmError(() => wgs84ToUtmInZone(24.7, 46.6, 0, 'N'), 'invalid-zone')
+    expectUtmError(() => wgs84ToUtmInZone(85, 46.6, 38, 'N'), 'out-of-range')
   })
 
   it('يرفض خطوط العرض خارج نطاق UTM (±80..84)', () => {

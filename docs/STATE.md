@@ -4,11 +4,11 @@
 
 | البند | القيمة |
 |---|---|
-| آخر تحديث | 2026-10-20 — الجلسة 17 |
-| المرحلة الحالية | **P4 مغلقة تقنيًا ✅ (T4.1–T4.4) — التالية: تفصيل P5 واعتمادها قبل T5.1** |
-| حالة المرحلة | ✅ مغلقة تقنيًا (123/123) — الفحوص اليدوية A-2..A-8 تبقى بنود قبول بصري معلّقة |
-| المهمة الجارية الآن | **لا مهمة جارية — P4 مغلقة؛ لا بدء لـP5 قبل اعتماد تفصيلها** |
-| المهمة التالية | **تفصيل مرحلة P5 (T5.1–T5.4) وعرضها على المالك — لا تنفيذ قبل الاعتماد** |
+| آخر تحديث | 2026-10-20 — الجلسة 18 |
+| المرحلة الحالية | **P5 مغلقة تقنيًا ✅ (T5.1–T5.4) — التالية: P6 (الجلسات والتصدير والإعدادات)** |
+| حالة المرحلة | ✅ مغلقة تقنيًا (157/157) — الفحوص اليدوية A-2..A-9 تبقى بنود قبول بصري معلّقة |
+| المهمة الجارية الآن | **لا مهمة جارية — P5 مغلقة تمهيدًا لبدء P6 المعتمدة (ADR-035)** |
+| المهمة التالية | **P6: T6.1 Repository + Dexie ثم T6.2–T6.5** |
 | إعاقات تقنية | لا يوجد |
 
 ## بنود معلّقة على المالك (Action Items)
@@ -22,6 +22,7 @@
 | A-6 | الفحص اليدوي للبحث: نتائج حية بعد 600ms · اختيار نتيجة يضيف نقطة على الكرة · إسناد OSM · مشاهد 429/انقطاع الشبكة · AR/EN | مراجعة T2.6 |
 | A-7 | الفحص اليدوي لقائمة النقاط: ترقيم 1..n · تعديل التسمية (حفظ/إلغاء/Enter/Esc) · حذف مع تصفير الاختيار · الترتيب أعلى/أسفل وتزامن أرقام الكرة · التركيز flyTo · AR/EN | مراجعة T2.7 |
 | A-8 | الفحص البصري لـP4: دبابيس مرقّمة/ملونة · تلميح عند التمرير · خط أزرق والمقطع المحدد أحمر · لوحة النتائج والإجمالي وتبديل الوحدات · التركيز التلقائي عند الإضافة ومن القائمة · AR/EN بلا أخطاء Console | قبل إغلاق مراجعة P4 بصريًا |
+| A-9 | الفحص البصري لـP5: رسم مضلع 3+ رؤوس · معاينة متقطعة · إغلاق بالرأس الأول/الزر/Esc · تراجع/مسح · عدم تعارض وضع النقر · المساحتان والفرق والتحذيرات · تبديل وحدات المساحة · AR/EN وRTL/LTR بلا أخطاء Console | قبل إغلاق مراجعة P5 بصريًا |
 
 ## مراجع سريعة
 - المتطلبات المعتمدة: `REQUIREMENTS.md` (v1.0)
@@ -37,6 +38,14 @@
 | OQ-3 | إضافة هامش دقة GPS إلى نموذج GeoPoint (مطلوب لـFR-1) | مغلق — أُضيف `accuracy` في T2.2 (ADR-025) |
 
 ## سجل الجلسات (الأحدث أولًا)
+### الجلسة 18 — 2026-10-20 — P5: المضلع والمساحة (T5.1–T5.4)
+- جديد: `core/geo/areaGeodesic.ts` (GeographicLib `PolygonArea` — `Compute(false, true)` + `Math.abs`) · `areaUtm.ts` (منطقة centroid + Shoelace + تحذيرات `multi-zone`/`multi-hemisphere`/`antimeridian`/`outside-utm-range`) · `core/coords/utm.ts` (`wgs84ToUtmInZone`) · `core/units/{unitTypes,areaConverters}.ts` · `store/usePolygonStore.ts` · `features/map/{usePolygonDraw,usePolygonEntities,polygonGeometry,polygonEntityIds}.ts` · `features/polygon/{PolygonTools,AreaComparison,areaFormat}.tsx` · اختبارات `areaGeodesic`/`areaUtm`/`areaFormat`/`areaUnits`/`polygonStore`/`polygonGeometry` + fixture `area-reference.json` (pyproj 3.7.2 / PROJ 9.5.1).
+- تعديلات: `App` (وضع المضلع وتعارضه مع وضع النقر) · `Sidebar` (PolygonTools + AreaComparison وإزالة قائمة الأدوات المعطلة) · `MapView` (هوكان المضلع + crosshair موحّد) · `utm.test.ts` (+1) · i18n `polygon.*`/`area.*`/`measure.method.*` · CSS للرسم والمقارنة · ROADMAP/ARCHITECTURE/DECISIONS.
+- قرار: ADR-034 — تفعيل ADR-017 وADR-013، وتثبيت `wgs84ToUtmInZone` بدل `wgs84ToUtm` لكل رأس، وإيقاف UTM في الحالات الحدية بدل رقم مضلل. اكتشاف عملي: `sign=false` تعيد متممة المساحة عند عكس اللف، لذا اعتُمد `Compute(false, true)`.
+- تحقق: lint نظيف · format:check نظيف · test **157/157** (25 ملفًا؛ +34) · build ناجح (1912 وحدة؛ 4.75 MB / gzip 1.30 MB — R-1 متوقع) · `npm audit --omit=dev`: 0 ثغرات إنتاجية.
+- **P5 مكتملة تقنيًا** — الفحص البصري A-9 معلّق على المالك.
+- الالتزام: `feat(polygon): add polygon drawing and geodesic/UTM area comparison (P5)`.
+
 ### الجلسة 17 — 2026-10-20 — P4: العرض البصري على الكرة (T4.1–T4.4)
 - جديد: `features/map/pinImage.ts` (SVG Data URI للدبابيس: 8 ألوان + رقم + حلقة ذهبية للمختار) · `tooltipPosition.ts` (تثبيت التلميح) · `usePointHover.ts` (`MOUSE_MOVE` + `scene.pick`) · `PointTooltip.tsx` (HTML overlay) · `pathGeometry.ts` (مقاطع نقية) · `usePathEntities.ts` (Polyline جيوديسية مثبَّتة على الأرض) · `features/points/resultsFormat.ts` (وحدات/اتجاهات) · `ResultsPanel.tsx` (جدول المقاطع + الإجمالي + منهجية + تبديل وحدات).
 - تعديلات: `usePointEntities` (Billboard بدل point · CLAMP_TO_GROUND للنقاط بلا ارتفاع · إزالة disableDepthTestDistance) · `MapView` (حاوية canvas منفصلة + التلميح + usePathEntities) · `usePointsStore` (`selectedSegmentIndex` + تصفيره عند الحذف/الترتيب) · `useFlyTo` (كشف النقطة المضافة + تأطيرها مع السابقة + `altitude` في الطلب) · `Sidebar` (ResultsPanel) · `index.css` (عرض 320px + أنماط الجدول/التلميح) · `ar.json`/`en.json` (`results.*`).

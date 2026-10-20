@@ -111,6 +111,42 @@ export function wgs84ToUtm(lat: number, lon: number): UtmCoordinate {
 }
 
 /**
+ * يحوّل WGS84 إلى UTM داخل منطقة محددة بلا إعادة اشتقاقها.
+ * مخصص لحساب مساحة موحدة: يُسمح بـEasting/Northing خارج النطاق المعتاد
+ * عند إسقاط رأس في منطقة مجاورة، ولا يُستخدم للعرض المباشر.
+ */
+export function wgs84ToUtmInZone(
+  lat: number,
+  lon: number,
+  zone: number,
+  hemisphere: UtmHemisphere,
+): UtmCoordinate {
+  assertLatLon(lat, lon)
+  assertFinite(zone, 'zone')
+
+  if (!Number.isInteger(zone) || zone < 1 || zone > 60) {
+    throw new UtmError('invalid-zone')
+  }
+  if (hemisphere !== 'N' && hemisphere !== 'S') {
+    throw new UtmError('invalid-coordinate')
+  }
+  if (lat < UTM_MIN_LATITUDE || lat > UTM_MAX_LATITUDE) {
+    throw new UtmError('out-of-range')
+  }
+
+  const [easting, northing] = proj4('EPSG:4326', epsgFor(zone, hemisphere), [
+    lon,
+    lat,
+  ])
+
+  if (!Number.isFinite(easting) || !Number.isFinite(northing)) {
+    throw new UtmError('invalid-coordinate')
+  }
+
+  return { easting, northing, zone, hemisphere }
+}
+
+/**
  * يحوّل UTM إلى WGS84 (lat · lon بالدرجات).
  * يتحقق من المنطقة (1..60) ومن حدود Easting/Northing قبل الإسقاط العكسي.
  */

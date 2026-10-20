@@ -14,6 +14,7 @@ import {
 export default function App() {
   const [layerState, setLayerState] = useState<LayerState>(DEFAULT_LAYER_STATE)
   const [isClickMode, setIsClickMode] = useState(false)
+  const [isPolygonMode, setIsPolygonMode] = useState(false)
   const [flyToRequest, setFlyToRequest] = useState<FlyToRequest | null>(null)
 
   const changeBaseLayer = (baseLayer: BaseLayerId): void => {
@@ -26,10 +27,20 @@ export default function App() {
 
   const toggleClickMode = useCallback((): void => {
     setIsClickMode((current) => !current)
+    setIsPolygonMode(false)
   }, [])
 
   const endClickMode = useCallback((): void => {
     setIsClickMode(false)
+  }, [])
+
+  const togglePolygonMode = useCallback((): void => {
+    setIsPolygonMode((current) => !current)
+    setIsClickMode(false)
+  }, [])
+
+  const endPolygonMode = useCallback((): void => {
+    setIsPolygonMode(false)
   }, [])
 
   const focusPoint = useCallback((point: GeoPoint): void => {
@@ -53,12 +64,16 @@ export default function App() {
         <Sidebar
           isClickMode={isClickMode}
           onToggleClickMode={toggleClickMode}
+          isPolygonMode={isPolygonMode}
+          onTogglePolygonMode={togglePolygonMode}
           onFocusPoint={focusPoint}
         />
         <MapView
           layerState={layerState}
           isClickMode={isClickMode}
           onClickModeEnd={endClickMode}
+          isPolygonMode={isPolygonMode}
+          onPolygonModeEnd={endPolygonMode}
           flyToRequest={flyToRequest}
         />
       </div>
