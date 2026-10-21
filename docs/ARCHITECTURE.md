@@ -155,6 +155,6 @@ interface SegmentResult {
 - **البناء:** `tsc -b && vite build`؛ الناتج `dist/` مع `dist/cesiumStatic/` (Assets/Workers/Widgets) المنسوخة بواسطة `vite-plugin-static-copy`.
 - **التقسيم:** مجموعات Rolldown (cesium/react/i18n/vendor) + `MapView` كسول؛ الهدف إبقاء الدخول < 300KB gzip.
 - **البيئة:** `VITE_CESIUM_ION_TOKEN` يُضمَّن وقت البناء (عام بطبيعته)؛ لا أسرار في `VITE_*`.
-- **الاستضافة:** Vercel (معتمد) أو Nginx. التطبيق بلا Router، فلا يحتاج rewrite عامًا.
+- **الاستضافة:** Vercel (معتمد) — النشر الحي: **https://geo3d-measure.vercel.app/** — أو Nginx. التطبيق بلا Router، فلا يحتاج rewrite عامًا.
 - **الرؤوس:** `Permissions-Policy: geolocation=(self)`، `X-Content-Type-Options`، `X-Frame-Options`، `Referrer-Policy`، وكاش طويل لأصول `/assets` المبصومة وقصير لـ`/cesiumStatic`.
 - التفاصيل التنفيذية والتحقق والتراجع في `DEPLOYMENT.md`، وقائمة القبول في `PRE_LAUNCH_CHECKLIST.md`.

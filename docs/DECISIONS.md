@@ -250,7 +250,7 @@
 
 ---
 
-## ADR-038 — النشر على Vercel: HTTPS ورؤوس أمان وكاش أصول 🕓 (2026-10-21 — T7.5)
+## ADR-038 — النشر على Vercel: HTTPS ورؤوس أمان وكاش أصول ✅ (2026-10-21 — T7.5)
 - **السياق:** v1.0 يحتاج استضافة ثابتة على HTTPS (إلزامي لـGPS)، مع أصول Cesium كبيرة وتوكن ion وقت البناء. التطبيق بلا Router، فلا يحتاج rewrites. النشر على Vercel معتمد من المالك (الجلسة 20)، وNginx بديل موثق.
 - **القرار:**
   1. استضافة Vercel للمجلد `dist` (`framework: vite`، `npm ci`، `npm run build`، `outputDirectory: dist`).
@@ -262,7 +262,9 @@
   7. وسم `v1.0.0` لا يُنشأ إلا بعد نشر ناجح + توقيع المالك على `PRE_LAUNCH_CHECKLIST.md`.
 - **البدائل المرفوضة:** Netlify/GitHub Pages الآن (Vercel معتمد) · rewrite عام (لا Router؛ يخفي 404) · CSP صارمة فورًا (خطر كسر Cesium) · كاش طويل لـ`cesiumStatic` (تعارض Workers بعد الترقية) · token في الكود أو `.env` مرفوع.
 - **الأثر:** `vercel.json` · `docs/DEPLOYMENT.md` · `README.md` · `docs/PRE_LAUNCH_CHECKLIST.md` · `docs/ARCHITECTURE.md` (§11).
-- **التحقق المحلي (الجلسة 23):** `vercel.json` صالح (5 قواعد رؤوس، بلا rewrites/routes) · `npm run build` ناجح · `npm audit --omit=dev` = 0 · `.env` مستثنى من Git والتوكن موجود محليًا. **التحقق الحي مؤجل** حتى اعتماد المالك/النشر.
+- **التحقق المحلي (الجلسة 23):** `vercel.json` صالح (5 قواعد رؤوس، بلا rewrites/routes) · `npm run build` ناجح · `npm audit --omit=dev` = 0 · `.env` مستثنى من Git والتوكن موجود محليًا.
+- **التحقق الحي (الجلسة 24):** **https://geo3d-measure.vercel.app/** — HTTP 200 وHTTP→HTTPS 308 · رؤوس الأمان والكاش مطابقة · `/assets/*` immutable و`/cesiumStatic/*` يومي · Cesium غير موجود في `index.html` · Esri + تضاريس ion بلا 401/403 · بلا أخطاء Console/exceptions/failed requests · نقطتا الرياض–جدة = 845.102 كم · GPS محاكى ±10م · تصدير GeoJSON/KML/CSV · حفظ/استعادة 3 نقاط. في المحاولة الأولى كان `VITE_CESIUM_ION_TOKEN` Placeholder (401)، وصحّحه المالك وأعاد النشر بلا Build Cache.
+- **الوسم:** أُنشئ `v1.0.0` بعد الاعتماد الكتابي للمالك «كل شي تمام اكمل» (2026-10-21). CSP ما زالت مؤجلة إلى 1.0.x كما في البند 6.
 
 ---
 

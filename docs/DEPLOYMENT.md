@@ -2,6 +2,7 @@
 
 > **الهدف:** نشر نسخة الإنتاج على HTTPS (إلزامي لـGPS) مع رؤوس أمان وكاش صحيح للأصول.
 > **المسار المعتمد:** Vercel. **البديل الموثق:** Nginx على خادم Linux.
+> **النشر الحالي (v1.0.0):** **https://geo3d-measure.vercel.app/** — Vercel Production، HTTPS، تم التحقق حيًا في 2026-10-21.
 
 ## 1) المتطلبات
 - Node.js **22.12+** أو **24 LTS** (Vite 8 لا يعمل على إصدارات أقدم).
@@ -193,9 +194,9 @@ server {
 ## 5) التحقق بعد النشر
 ### 5.1 آلي
 ```bash
-curl -I https://your-domain.com/
-curl -I https://your-domain.com/assets/<hashed-file>.js
-curl -I https://your-domain.com/cesiumStatic/Workers/createVerticesFromHeightmap.js
+curl -I https://geo3d-measure.vercel.app/
+curl -I https://geo3d-measure.vercel.app/assets/<hashed-file>.js
+curl -I https://geo3d-measure.vercel.app/cesiumStatic/Workers/createVerticesFromHeightmap.js
 ```
 تحقق من:
 - `HTTP/2 200` و`content-type` صحيح.
@@ -214,6 +215,14 @@ curl -I https://your-domain.com/cesiumStatic/Workers/createVerticesFromHeightmap
 - [ ] تبديل AR/EN وRTL/LTR على الموبايل.
 - [ ] لا أخطاء 404 لأصول Cesium أو العاملين (Workers).
 
+### 5.3 نتيجة التحقق الحي (v1.0.0 — 2026-10-21)
+- ✅ الصفحة وHTTPS والرؤوس والكاش: `/` = `no-cache` · `/assets/*` = سنة immutable · `/cesiumStatic/*` = يوم + SWR.
+- ✅ Esri + تضاريس ion بلا 401/403 بعد تصحيح `VITE_CESIUM_ION_TOKEN` وإعادة النشر بلا Build Cache.
+- ✅ لا أخطاء Console/exceptions/failed requests · Cesium غير موجود في `index.html`.
+- ✅ نقطتا الرياض–جدة = 845.102 كم · GPS محاكى على HTTPS ±10م · تصدير GeoJSON/KML/CSV · حفظ/استعادة 3 نقاط.
+- ✅ `npm audit --omit=dev` = 0 · الحزمة الأولية 215.9KB gzip · Cesium 1118.6KB gzip كسول.
+- **ملاحظة:** الفحص على هاتف حقيقي وفتح ملفات التصدير في QGIS/Google Earth/Excel اعتُمدا كتابيًا من المالك («كل شي تمام اكمل»)؛ يُعاد التحقق منهما عند أي تغيير في GPS أو التصدير.
+
 ## 6) التراجع (Rollback)
 - **Vercel:** Deployments → اختر النشر السابق → **Instant Rollback** (أو أعد نشر commit سابق).
 - **Nginx:** استبدل `root` بمجلد `dist` الاحتياطي ثم `sudo nginx -t && sudo systemctl reload nginx`.
@@ -231,4 +240,4 @@ curl -I https://your-domain.com/cesiumStatic/Workers/createVerticesFromHeightmap
 | أصول قديمة بعد الترقية | كاش `index.html` أو `cesiumStatic` | تأكد من `no-cache` للـindex، وأعد التحميل بقوة. |
 
 ## 8) قائمة قصيرة قبل الإطلاق
-راجع `PRE_LAUNCH_CHECKLIST.md` بالكامل. لا يُعلن «منشورًا» ولا يُوسم `v1.0.0` قبل توقيع المالك والتحقق الحي.
+راجع `PRE_LAUNCH_CHECKLIST.md` بالكامل. **تم الإطلاق:** v1.0.0 منشورة على https://geo3d-measure.vercel.app/ بعد التحقق الحي واعتماد المالك الكتابي (2026-10-21).
